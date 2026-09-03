@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>You lost! 😈🏈</title>
+<title>Verlierer-Bestrafung 😈🏈</title>
 <style>
   :root{
     --bg:#0a0d13;
@@ -57,11 +57,11 @@
     font-size:34px;line-height:1;margin-bottom:6px;
   }
   h1.title{
-    font-size:32px;font-weight:800;letter-spacing:-0.02em;margin:0;
-    color:var(--crimson-glow);text-transform: uppercase;
+    font-size:26px;font-weight:800;letter-spacing:-0.01em;margin:0;
+    color:var(--text);
   }
   .subtitle{
-    color:var(--muted);font-size:15px;margin-top:4px;font-weight: 500;
+    color:var(--muted);font-size:13px;margin-top:4px;
   }
   .laces{
     width:120px;height:10px;margin:14px auto 0;opacity:.55;
@@ -141,9 +141,9 @@
     padding:12px;margin-bottom:10px;
   }
   .cat-card-row{display:flex;gap:10px;align-items:flex-start;}
-  .cat-icon-input{
-    width:46px;height:40px;border-radius:var(--radius);background:var(--bg-alt);
-    color: var(--text); text-align: center; font-size: 20px;
+  .cat-icon-display{
+    width:40px;height:40px;border-radius:var(--radius);background:var(--bg-alt);
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;
     border:1px solid var(--border);
   }
   .cat-text-input{
@@ -156,6 +156,12 @@
     background:var(--bg-alt);color:var(--muted);font-size:16px;
   }
   .cat-remove:disabled{opacity:.35;cursor:not-allowed;}
+  .icon-grid{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+  .icon-btn{
+    width:34px;height:34px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--bg-alt);font-size:17px;display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn.active{border-color:var(--crimson);background:var(--crimson-dim);}
   .cat-error{color:var(--red-bad);font-size:11.5px;margin-top:6px;}
   .row-btns{display:flex;gap:10px;margin-top:12px;}
   .btn{
@@ -169,34 +175,18 @@
   .btn.full{width:100%;}
   .btn.small{padding:7px 12px;font-size:12.5px;}
 
-  /* ---------- choice grid / dice ---------- */
-  .choice-grid{display:flex;gap:8px;flex-wrap:wrap;}
-  .choice-btn{
-    position: relative;
-    border-radius:var(--radius);border:1px solid var(--border);background:var(--panel-2);
-    color:var(--text);padding:12px 0;font-size:14px;font-weight:700;flex:1;min-width:52px;text-align:center;
-  }
-  .choice-btn.active{border-color:var(--crimson);background:var(--crimson-dim);color:#fff;}
-  .recommended-badge{
-    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-    background: var(--gold); color: #000; font-size: 8px; padding: 2px 4px;
-    border-radius: 4px; text-transform: uppercase; white-space: nowrap;
-  }
-
   /* ---------- generic form bits ---------- */
   .field-label{font-size:12.5px;color:var(--muted);margin-bottom:6px;display:block;font-weight:600;}
   .num-input{
     background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
     border-radius:var(--radius);padding:10px 12px;font-size:15px;width:100%;
   }
-
-  /* Slider Styling */
-  .slider-wrap{margin: 20px 0;}
-  .slider-labels{display: flex; justify-content: space-between; margin-top: 10px;}
-  .slider-labels span{font-size: 10px; color: var(--muted-2); width: 20%; text-align: center;}
-  .slider-labels span.active{color: var(--gold); font-weight: bold;}
-  input[type=range] { width: 100%; accent-color: var(--crimson); cursor: pointer; }
-
+  .choice-grid{display:flex;gap:8px;flex-wrap:wrap;}
+  .choice-btn{
+    border-radius:var(--radius);border:1px solid var(--border);background:var(--panel-2);
+    color:var(--text);padding:12px 0;font-size:14px;font-weight:700;flex:1;min-width:52px;text-align:center;
+  }
+  .choice-btn.active{border-color:var(--crimson);background:var(--crimson-dim);color:#fff;}
   .radio-row{display:flex;gap:10px;margin-bottom:14px;}
   .radio-opt{
     flex:1;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel-2);
@@ -234,6 +224,7 @@
     border-radius:var(--radius);padding:8px 6px;font-size:13px;text-align:center;flex:none;}
   .field-remove{flex:none;width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);
     background:var(--bg-alt);color:var(--muted);font-size:14px;}
+  .field-remove:disabled{opacity:.3;}
   .field-extra{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
   .add-field-row{display:flex;gap:8px;margin-top:12px;}
   .add-field-row select{flex:1;background:var(--panel-2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:9px;font-size:13px;}
@@ -244,7 +235,6 @@
     background:linear-gradient(180deg, rgba(10,13,19,0) 0%, rgba(10,13,19,.97) 30%);
     padding:18px 16px 16px;
     display:flex;justify-content:center;
-    z-index: 100;
   }
   .bottomnav-inner{
     max-width:480px;width:100%;display:flex;gap:10px;
@@ -348,19 +338,28 @@
   .summary-derivation .final{color:var(--gold);font-weight:800;font-size:15px;}
   .final-hero{text-align:center;padding:8px 0 4px;}
   .final-hero .big-num{font-size:60px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
+  .countdown{
+    display:flex;justify-content:center;gap:10px;margin:14px 0 4px;
+  }
+  .cd-unit{text-align:center;}
+  .cd-unit .val{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--text);}
+  .cd-unit .lbl{font-size:10.5px;color:var(--muted-2);}
 
   /* ---------- misc ---------- */
   .empty-msg{color:var(--muted);font-size:13.5px;text-align:center;padding:16px 0;}
   .modal-overlay{
     position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;
-    padding:20px;z-index:200;
+    padding:20px;z-index:50;
   }
   .modal-box{
     background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
     max-width:420px;width:100%;padding:20px;max-height:80vh;overflow-y:auto;
   }
+  .modal-box h2{margin-top:0;}
+  .modal-box p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  .modal-box ul{font-size:13.5px;color:var(--muted);line-height:1.7;padding-left:18px;}
   .hidden{display:none !important;}
-  .confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:150;}
+  .confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:40;}
 </style>
 </head>
 <body>
@@ -368,8 +367,8 @@
 <div class="app" id="app">
   <header class="top">
     <div class="logo-row">😈🏈</div>
-    <h1 class="title">You lost!</h1>
-    <div class="subtitle">Hier entscheidet sich dein Schicksal</div>
+    <h1 class="title">Verlierer-Bestrafung</h1>
+    <div class="subtitle">Würfeln. Drehen. Leiden.</div>
     <svg class="laces" viewBox="0 0 120 10"><g stroke="#c8203c" stroke-width="1.4">
       <line x1="5" y1="1" x2="5" y2="9"/><line x1="20" y1="1" x2="20" y2="9"/>
       <line x1="35" y1="1" x2="35" y2="9"/><line x1="50" y1="1" x2="50" y2="9"/>
@@ -377,7 +376,7 @@
       <line x1="95" y1="1" x2="95" y2="9"/><line x1="110" y1="1" x2="110" y2="9"/>
       <line x1="0" y1="5" x2="120" y2="5" stroke-width="1"/>
     </g></svg>
-    <div class="reload-note">⚠️ Beim Neuladen der Seite gehen alle Eingaben verloren.</div>
+    <div class="reload-note">⚠️ Beim Neuladen der Seite gehen alle Eingaben verloren — nichts wird gespeichert.</div>
   </header>
 
   <div class="topbar-actions" id="topbarActions"></div>
@@ -405,33 +404,32 @@ function uid(){ return 'id' + Math.random().toString(36).slice(2,9); }
 function clamp(v,min,max){ return Math.min(max, Math.max(min, v)); }
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-const SLIDER_STEPS = [
-  { label: "Tutorial", factor: 1.2 },
-  { label: "Casual", factor: 1.1 },
-  { label: "Normal", factor: 1.0 },
-  { label: "Hard", factor: 0.9 },
-  { label: "Impossible", factor: 0.8 }
-];
+const ICONS = ["🍺","🌭","🏃","🚴","🥃","🔥","❄️","🎯","🍕","💪"];
 
 function defaultConfig(){
   return {
     categories: [
       { id: uid(), icon:"🍺", text:"Bier trinken" },
-      { id: uid(), icon:"🏃", text:"km laufen" },
-      { id: uid(), icon:"🌭", text:"Hotdogs essen" },
+      { id: uid(), icon:"🏃", text:"Liegestütze" },
+      { id: uid(), icon:"🔥", text:"Scharfe Sauce essen" },
     ],
-    diceType: null,
-    timeMode: "fixed",
+    diceType: 6,
+    timeMode: "fixed", // fixed | dynamic
     fixedHours: 24,
-    dynamicFactorIdx: 2, // Normal
+    dynamicFactor: 1.0,
     minTotalHours: 0,
-    wheelEnabled: false,
-    wheelFields: [],
+    wheelEnabled: true,
+    timePlus: { enabled:true, hours:2, weight:1 },
+    timeMinus: { enabled:true, hours:2, weight:1 },
+    customFields: [
+      { id: uid(), type:"bonus", label:"Sieger darf 1 Aufgabe streichen", weight:1 },
+      { id: uid(), type:"handicap", label:"Doppelte Menge bei 1 Aufgabe", weight:1 },
+    ],
   };
 }
 
 const S = {
-  page: "config",
+  page: "config", // config | game
   config: defaultConfig(),
   configTab: 1,
   maxReachedConfigTab: 1,
@@ -450,31 +448,73 @@ function freshGame(){
     baseHours: null,
     totalHours: null,
     timeLog: [],
-    wheelPool: JSON.parse(JSON.stringify(S.config.wheelFields)),
+    wheelPool: buildWheelPool(),
     wheelResults: [],
     wheelRotationBase: 0,
+    gotMeOut: false,
     confettiFired: false,
-    hasSpun: false,
+    deadline: null,
   };
+}
+
+function buildWheelPool(){
+  const pool = [];
+  if (S.config.timePlus.enabled) pool.push({ id: uid(), type:"time_plus", hours: S.config.timePlus.hours, weight: S.config.timePlus.weight });
+  if (S.config.timeMinus.enabled) pool.push({ id: uid(), type:"time_minus", hours: S.config.timeMinus.hours, weight: S.config.timeMinus.weight });
+  S.config.customFields.forEach(f => pool.push({ id: uid(), type: f.type, label: f.label, weight: f.weight }));
+  return pool;
 }
 
 /* ===================== VALIDATION ===================== */
 
 function configTab1Valid(){
-  return S.config.categories.length >= 2 && S.config.categories.every(c => c.text.trim().length > 0);
+  const cats = S.config.categories;
+  if (cats.length < 2) return false;
+  const seen = new Set();
+  for (const c of cats){
+    const t = c.text.trim().toLowerCase();
+    if (!t) return false;
+    if (seen.has(t)) return false;
+    seen.add(t);
+  }
+  return true;
 }
-function configTab2Valid(){ return S.config.diceType !== null; }
-function configTab3Valid(){ return true; }
-function configTab4Valid(){ return true; }
-
+function configTab2Valid(){ return true; }
+function configTab3Valid(){
+  if (S.config.timeMode === "fixed"){
+    return Number.isFinite(S.config.fixedHours) && S.config.fixedHours >= 1 && S.config.fixedHours <= 72;
+  }
+  return Number.isFinite(S.config.dynamicFactor) && S.config.dynamicFactor > 0;
+}
+function configTab4Valid(){
+  if (!S.config.wheelEnabled) return true;
+  const total = (S.config.timePlus.enabled?1:0) + (S.config.timeMinus.enabled?1:0) + S.config.customFields.length;
+  return total >= 1;
+}
 function configTabValid(n){
   return [null, configTab1Valid, configTab2Valid, configTab3Valid, configTab4Valid][n]();
 }
 
-function gameTab1Valid(){ return S.config.categories.every(c => S.game.rolls[c.id] !== null); }
-function gameTabValid(n){ return [null, gameTab1Valid, ()=>true, ()=> (S.game.hasSpun || !S.config.wheelEnabled), ()=>true][n](); }
+function gameTab1Valid(){
+  return S.config.categories.every(c => S.game.rolls[c.id] !== null);
+}
+function gameTab2Valid(){ return true; }
+function gameTab3Valid(){
+  if (!S.config.wheelEnabled) return true;
+  return S.game.gotMeOut || S.game.wheelPool.length === 0;
+}
+function gameTabValid(n){
+  return [null, gameTab1Valid, gameTab2Valid, gameTab3Valid, ()=>true][n]();
+}
 
-/* ===================== RENDER SHELL ===================== */
+/* ===================== NAV LABELS ===================== */
+
+const CONFIG_LABELS = ["Aufgaben","Würfel","Zeit","Glücksrad"];
+const CONFIG_DOWNS = ["1st Down","2nd Down","3rd Down","4th Down"];
+const GAME_LABELS = ["Würfeln","Zeit","Glücksrad","Zusammenfassung"];
+const GAME_DOWNS = ["1st Down","2nd Down","3rd Down","4th Down"];
+
+/* ===================== RENDER: SHELL ===================== */
 
 function render(){
   renderTopbar();
@@ -486,19 +526,37 @@ function render(){
 function renderTopbar(){
   const el = document.getElementById("topbarActions");
   if (S.page === "config"){
-    el.innerHTML = `<button class="link-btn danger" id="btnResetAll">Reset All</button>`;
+    el.innerHTML = `
+      <button class="link-btn danger" id="btnResetAll">Reset All</button>
+      <button class="help-btn" id="btnHelp" title="Hilfe">?</button>
+    `;
   } else {
-    el.innerHTML = `<button class="link-btn" id="btnBackToConfig">← Zurück zur Config</button>`;
+    el.innerHTML = `
+      <button class="link-btn" id="btnBackToConfig">← Zurück zur Config</button>
+      <button class="help-btn" id="btnHelp" title="Hilfe">?</button>
+    `;
   }
+  const helpBtn = document.getElementById("btnHelp");
+  if (helpBtn) helpBtn.onclick = showHelpModal;
   const resetBtn = document.getElementById("btnResetAll");
-  if (resetBtn) resetBtn.onclick = () => { if(confirm("Alles zurücksetzen?")) { S.config = defaultConfig(); S.page="config"; S.configTab=1; render(); } };
+  if (resetBtn) resetBtn.onclick = () => {
+    if (confirm("Wirklich ALLES zurücksetzen? Alle Aufgaben, Einstellungen und der Spielstand gehen verloren.")){
+      S.config = defaultConfig();
+      S.configTab = 1; S.maxReachedConfigTab = 1;
+      S.game = null; S.gameTab = 1; S.maxReachedGameTab = 1;
+      S.page = "config";
+      render();
+    }
+  };
   const backBtn = document.getElementById("btnBackToConfig");
   if (backBtn) backBtn.onclick = () => { S.page = "config"; render(); };
 }
 
 function renderStepNav(){
   const nav = document.getElementById("stepNav");
-  const labels = S.page === "config" ? ["Aufgaben","Würfel","Zeit","Wheel"] : ["Würfeln","Zeit","Wheel","Ende"];
+  const cap = document.getElementById("downCaption");
+  const labels = S.page === "config" ? CONFIG_LABELS : GAME_LABELS;
+  const downs = S.page === "config" ? CONFIG_DOWNS : GAME_DOWNS;
   const current = S.page === "config" ? S.configTab : S.gameTab;
   const maxReached = S.page === "config" ? S.maxReachedConfigTab : S.maxReachedGameTab;
 
@@ -511,13 +569,16 @@ function renderStepNav(){
     if (n === current) cls += " current";
     if (reachable) cls += " reachable";
     html += `<div class="step-chip-wrap ${n===current?'current':''}">
-      <div class="${cls}" data-step="${n}">${n < current ? '✓' : n}</div>
+      <div class="${cls}" data-step="${n}" ${reachable?'':'aria-disabled="true"'}>${n < current ? '✓' : n}</div>
       <div class="step-label">${label}</div>
     </div>`;
-    if (i < labels.length-1) html += `<div class="step-line ${n < current ? 'filled':''}"></div>`;
+    if (i < labels.length-1){
+      html += `<div class="step-line ${n < current ? 'filled':''}"></div>`;
+    }
   });
-  nav.innerHTML = html + '</div>';
-  document.getElementById("downCaption").textContent = `🏈 ${["1st Down","2nd Down","3rd Down","4th Down"][current-1]}`;
+  html += '</div>';
+  nav.innerHTML = html;
+  cap.textContent = `🏈 ${downs[current-1]}`;
 
   nav.querySelectorAll(".step-chip.reachable").forEach(chip => {
     chip.onclick = () => {
@@ -530,33 +591,49 @@ function renderStepNav(){
 
 function renderBottomNav(){
   const el = document.getElementById("bottomNav");
-  const isConfig = S.page === "config";
-  const tab = isConfig ? S.configTab : S.gameTab;
-  const valid = isConfig ? configTabValid(tab) : gameTabValid(tab);
-
-  let nextLabel = "Weiter →";
-  if (isConfig && tab === 4) nextLabel = "Let's Roll! 🏈";
-  if (!isConfig && tab === 3) nextLabel = "Get me out";
-
-  el.innerHTML = `
-    <button class="btn ghost" id="navBack" ${tab===1?'disabled':''}>← Zurück</button>
-    ${tab < 4 || (isConfig && tab === 4) ? `<button class="btn primary" id="navNext" ${valid?'':'disabled'}>${nextLabel}</button>` : ''}
-  `;
-
-  document.getElementById("navBack").onclick = () => {
-    if (isConfig) { S.configTab--; render(); }
-    else { S.gameTab--; render(); }
-  };
-  const next = document.getElementById("navNext");
-  if (next) next.onclick = () => {
-    if (isConfig) {
-      if (tab < 4) { S.configTab++; S.maxReachedConfigTab = Math.max(S.maxReachedConfigTab, S.configTab); render(); }
-      else { S.game = freshGame(); S.page = "game"; S.gameTab = 1; S.maxReachedGameTab = 1; render(); }
+  if (S.page === "config"){
+    const tab = S.configTab;
+    const valid = configTabValid(tab);
+    let rightBtn;
+    if (tab < 4){
+      rightBtn = `<button class="btn primary" id="navNext" ${valid?'':'disabled'}>Weiter →</button>`;
     } else {
-      if (S.gameTab === 1 && S.game.baseHours === null) computeBaseHours();
-      S.gameTab++; S.maxReachedGameTab = Math.max(S.maxReachedGameTab, S.gameTab); render();
+      rightBtn = `<button class="btn primary" id="navRoll" ${valid?'':'disabled'}>Let's Roll! 🏈</button>`;
     }
-  };
+    el.innerHTML = `
+      <button class="btn ghost" id="navBack" ${tab===1?'disabled':''}>← Zurück</button>
+      ${rightBtn}
+    `;
+    const back = document.getElementById("navBack");
+    if (back) back.onclick = () => { if (S.configTab>1){ S.configTab--; render(); } };
+    const next = document.getElementById("navNext");
+    if (next) next.onclick = () => { if (configTabValid(S.configTab)){ S.configTab++; S.maxReachedConfigTab = Math.max(S.maxReachedConfigTab, S.configTab); render(); } };
+    const roll = document.getElementById("navRoll");
+    if (roll) roll.onclick = () => {
+      S.game = freshGame();
+      S.page = "game"; S.gameTab = 1; S.maxReachedGameTab = 1;
+      render();
+    };
+  } else {
+    const tab = S.gameTab;
+    const valid = gameTabValid(tab);
+    let rightBtn = tab < 4
+      ? `<button class="btn primary" id="navNext" ${valid?'':'disabled'}>Weiter →</button>`
+      : ``;
+    el.innerHTML = `
+      <button class="btn ghost" id="navBack" ${tab===1?'disabled':''}>← Zurück</button>
+      ${rightBtn}
+    `;
+    const back = document.getElementById("navBack");
+    if (back) back.onclick = () => { if (S.gameTab>1){ S.gameTab--; render(); } };
+    const next = document.getElementById("navNext");
+    if (next) next.onclick = () => {
+      if (!gameTabValid(S.gameTab)) return;
+      if (S.gameTab === 1 && S.game.baseHours === null) computeBaseHours();
+      S.gameTab++; S.maxReachedGameTab = Math.max(S.maxReachedGameTab, S.gameTab);
+      render();
+    };
+  }
 }
 
 function renderTabContent(){
@@ -575,313 +652,868 @@ function renderTabContent(){
   }
 }
 
-/* ===================== CONFIG TABS ===================== */
+/* small helper to only refresh nav-dependent bits without full page rebuild */
+function refreshNavOnly(){ renderStepNav(); renderBottomNav(); }
+
+/* ===================== CONFIG TAB 1: Aufgaben ===================== */
 
 function buildConfigTab1(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
-  wrap.innerHTML = `<h2>Strafaufgaben</h2><p class="hint">Aufgabe und Emoji eingeben.</p><div id="catList"></div>
-    <div class="row-btns"><button class="btn" id="addCat">+ Kategorie</button></div>`;
+  wrap.innerHTML = `
+    <h2>Strafaufgaben</h2>
+    <p class="hint">Mindestens 2, maximal 5 Kategorien. Jede bekommt beim Spiel eine gewürfelte Menge.</p>
+    <div id="catList"></div>
+    <div class="row-btns">
+      <button class="btn" id="addCat">+ Kategorie</button>
+    </div>
+  `;
   const list = wrap.querySelector("#catList");
-
-  const renderList = () => {
-    list.innerHTML = "";
-    S.config.categories.forEach((cat, idx) => {
-      const card = document.createElement("div");
-      card.className = "cat-card";
-      card.innerHTML = `
-        <div class="cat-card-row">
-          <input class="cat-icon-input" value="${cat.icon}" placeholder="?">
-          <input class="cat-text-input" value="${esc(cat.text)}" placeholder="z.B. Bier trinken">
-          <button class="cat-remove" ${S.config.categories.length <= 1 ? 'disabled' : ''}>✕</button>
-        </div>`;
-      card.querySelector(".cat-icon-input").oninput = (e) => cat.icon = e.target.value;
-      card.querySelector(".cat-text-input").oninput = (e) => { cat.text = e.target.value; renderBottomNav(); };
-      card.querySelector(".cat-remove").onclick = () => { S.config.categories.splice(idx,1); renderList(); renderBottomNav(); };
-      list.appendChild(card);
-    });
+  renderCatList(list);
+  wrap.querySelector("#addCat").onclick = () => {
+    if (S.config.categories.length >= 5) return;
+    S.config.categories.push({ id: uid(), icon: ICONS[0], text: "" });
+    renderCatList(list);
+    updateAddRemoveButtons(wrap);
+    refreshNavOnly();
   };
-  wrap.querySelector("#addCat").onclick = () => { S.config.categories.push({id:uid(), icon:"", text:""}); renderList(); renderBottomNav(); };
-  renderList();
+  updateAddRemoveButtons(wrap);
   return wrap;
 }
+
+function renderCatList(list){
+  list.innerHTML = "";
+  S.config.categories.forEach((cat, idx) => {
+    const card = document.createElement("div");
+    card.className = "cat-card";
+    card.dataset.id = cat.id;
+    card.innerHTML = `
+      <div class="cat-card-row">
+        <div class="cat-icon-display">${cat.icon}</div>
+        <input class="cat-text-input" type="text" maxlength="40" placeholder="z. B. Liegestütze" value="${esc(cat.text)}">
+        <button class="cat-remove" title="Entfernen">✕</button>
+      </div>
+      <div class="icon-grid">
+        ${ICONS.map(ic => `<button class="icon-btn ${ic===cat.icon?'active':''}" data-icon="${ic}">${ic}</button>`).join("")}
+      </div>
+      <div class="cat-error hidden"></div>
+    `;
+    const input = card.querySelector(".cat-text-input");
+    input.oninput = () => {
+      cat.text = input.value;
+      validateCatCard(card, cat);
+      refreshNavOnly();
+    };
+    card.querySelectorAll(".icon-btn").forEach(btn => {
+      btn.onclick = () => {
+        cat.icon = btn.dataset.icon;
+        card.querySelector(".cat-icon-display").textContent = cat.icon;
+        card.querySelectorAll(".icon-btn").forEach(b => b.classList.toggle("active", b.dataset.icon===cat.icon));
+      };
+    });
+    card.querySelector(".cat-remove").onclick = () => {
+      if (S.config.categories.length <= 2) return;
+      S.config.categories = S.config.categories.filter(c => c.id !== cat.id);
+      renderCatList(list);
+      updateAddRemoveButtons(list.closest(".panel"));
+      refreshNavOnly();
+    };
+    list.appendChild(card);
+    validateCatCard(card, cat);
+  });
+  updateAddRemoveButtons(list.closest(".panel"));
+}
+
+function validateCatCard(card, cat){
+  const input = card.querySelector(".cat-text-input");
+  const errEl = card.querySelector(".cat-error");
+  const text = cat.text.trim().toLowerCase();
+  let msg = "";
+  if (!text) msg = "Bitte eine Beschreibung eingeben.";
+  else {
+    const dupes = S.config.categories.filter(c => c.text.trim().toLowerCase() === text);
+    if (dupes.length > 1) msg = "Dieser Name existiert schon.";
+  }
+  if (msg){
+    input.classList.add("err"); errEl.textContent = msg; errEl.classList.remove("hidden");
+  } else {
+    input.classList.remove("err"); errEl.classList.add("hidden");
+  }
+}
+
+function updateAddRemoveButtons(panel){
+  if (!panel) return;
+  const addBtn = panel.querySelector("#addCat");
+  if (addBtn) addBtn.disabled = S.config.categories.length >= 5;
+  panel.querySelectorAll(".cat-remove").forEach(b => b.disabled = S.config.categories.length <= 2);
+}
+
+/* ===================== CONFIG TAB 2: Würfel ===================== */
 
 function buildConfigTab2(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
   const dice = [4,6,8,10,12,20];
-  wrap.innerHTML = `<h2>Würfeltyp</h2><div class="choice-grid">
-    ${dice.map(d => `<button class="choice-btn ${d===S.config.diceType?'active':''}" data-d="${d}">${d===20?'<span class="recommended-badge">Empfohlen</span>':''}D${d}</button>`).join("")}
-    </div>`;
+  wrap.innerHTML = `
+    <h2>Würfeltyp</h2>
+    <p class="hint">Dieser Würfel wird für alle Kategorien verwendet.</p>
+    <div class="choice-grid">
+      ${dice.map(d => `<button class="choice-btn ${d===S.config.diceType?'active':''}" data-d="${d}">D${d}</button>`).join("")}
+    </div>
+  `;
   wrap.querySelectorAll(".choice-btn").forEach(btn => {
     btn.onclick = () => {
       S.config.diceType = parseInt(btn.dataset.d, 10);
       wrap.querySelectorAll(".choice-btn").forEach(b => b.classList.toggle("active", b===btn));
-      renderBottomNav();
     };
   });
   return wrap;
 }
+
+/* ===================== CONFIG TAB 3: Zeit ===================== */
 
 function buildConfigTab3(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
-  wrap.innerHTML = `<h2>Zeit-Konfiguration</h2>
+  wrap.innerHTML = `
+    <h2>Zeit-Konfiguration</h2>
+    <p class="hint">Wie lange hat der Verlierer Zeit, alles zu erledigen?</p>
     <div class="radio-row">
       <div class="radio-opt ${S.config.timeMode==='fixed'?'active':''}" data-mode="fixed">Feste Zeit</div>
-      <div class="radio-opt ${S.config.timeMode==='dynamic'?'active':''}" data-mode="dynamic">Dynamisch</div>
+      <div class="radio-opt ${S.config.timeMode==='dynamic'?'active':''}" data-mode="dynamic">Dynamische Zeit</div>
     </div>
-    <div id="modeFields"></div>`;
-
-  const renderFields = () => {
-    const container = wrap.querySelector("#modeFields");
-    if (S.config.timeMode === "fixed") {
-      container.innerHTML = `<label class="field-label">Stunden</label><input class="num-input" type="number" value="${S.config.fixedHours}" id="fixInp">`;
-      container.querySelector("#fixInp").oninput = (e) => S.config.fixedHours = parseInt(e.target.value);
+    <div id="modeFields"></div>
+  `;
+  wrap.querySelectorAll(".radio-opt").forEach(opt => {
+    opt.onclick = () => {
+      S.config.timeMode = opt.dataset.mode;
+      wrap.querySelectorAll(".radio-opt").forEach(o => o.classList.toggle("active", o===opt));
+      renderModeFields();
+      refreshNavOnly();
+    };
+  });
+  const modeFields = wrap.querySelector("#modeFields");
+  function renderModeFields(){
+    if (S.config.timeMode === "fixed"){
+      modeFields.innerHTML = `
+        <label class="field-label">Stunden (1–72)</label>
+        <input class="num-input" type="number" min="1" max="72" step="1" value="${S.config.fixedHours}" id="fixedHoursInput">
+      `;
+      modeFields.querySelector("#fixedHoursInput").oninput = (e) => {
+        const v = parseFloat(e.target.value);
+        S.config.fixedHours = v;
+        refreshNavOnly();
+      };
     } else {
-      container.innerHTML = `<label class="field-label">Schwierigkeit</label>
-        <div class="slider-wrap">
-          <input type="range" min="0" max="4" step="1" value="${S.config.dynamicFactorIdx}" id="factSli">
-          <div class="slider-labels">${SLIDER_STEPS.map((s,i)=>`<span class="${i===S.config.dynamicFactorIdx?'active':''}">${s.label}<br>(${s.factor})</span>`).join("")}</div>
-        </div>`;
-      container.querySelector("#factSli").oninput = (e) => {
-        S.config.dynamicFactorIdx = parseInt(e.target.value);
-        renderFields();
+      modeFields.innerHTML = `
+        <p class="hint" style="margin-top:0;">Endzeit = Summe der gewürfelten Zahlen × Faktor.</p>
+        <label class="field-label">Faktor (Stunden pro Punkt)</label>
+        <input class="num-input" type="number" min="0.5" max="5" step="0.5" value="${S.config.dynamicFactor}" id="factorInput">
+      `;
+      modeFields.querySelector("#factorInput").oninput = (e) => {
+        const v = parseFloat(e.target.value);
+        S.config.dynamicFactor = v;
+        refreshNavOnly();
       };
     }
-  };
-  wrap.querySelectorAll(".radio-opt").forEach(opt => {
-    opt.onclick = () => { S.config.timeMode = opt.dataset.mode; renderTabContent(); };
-  });
-  renderFields();
+  }
+  renderModeFields();
   return wrap;
 }
+
+/* ===================== CONFIG TAB 4: Glücksrad ===================== */
 
 function buildConfigTab4(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
-  wrap.innerHTML = `<h2>Wheel of Fortune</h2>
-    <div class="toggle-row"><div><strong>Wheel aktivieren</strong></div>
-    <div class="toggle ${S.config.wheelEnabled?'on':''}" id="wTog"><div class="knob"></div></div></div>
-    <div id="wBody"></div>`;
-
-  const renderBody = () => {
-    const body = wrap.querySelector("#wBody");
-    if (!S.config.wheelEnabled) { body.innerHTML = ""; return; }
-    body.innerHTML = `<div id="fieldList"></div>
-      <div class="add-field-row">
-        <select id="fType"><option value="time_plus">Zeit +</option><option value="time_minus">Zeit -</option><option value="bonus">Bonus</option><option value="handicap">Handicap</option></select>
-        <button class="btn small" id="addF">+ Feld</button>
-      </div>`;
-
-    const fList = body.querySelector("#fieldList");
-    const renderFList = () => {
-      fList.innerHTML = "";
-      S.config.wheelFields.forEach((f, idx) => {
-        const row = document.createElement("div");
-        row.className = "field-row";
-        const isTime = f.type.startsWith("time");
-        row.innerHTML = `
-          <div class="field-row-top"><span class="type-badge ${f.type}">${f.type}</span>
-          <input class="field-label-text" value="${esc(f.label)}" placeholder="Name...">
-          <button class="field-remove" data-idx="${idx}">✕</button></div>
-          ${isTime ? `<div class="field-extra">Stunden: <input class="field-mini-input" type="number" value="${f.hours}"></div>`:''}`;
-        row.querySelector(".field-label-text").oninput = (e) => f.label = e.target.value;
-        if(isTime) row.querySelector(".field-mini-input").oninput = (e) => f.hours = parseInt(e.target.value);
-        row.querySelector(".field-remove").onclick = () => { S.config.wheelFields.splice(idx,1); renderFList(); };
-        fList.appendChild(row);
-      });
-    };
-    body.querySelector("#addF").onclick = () => {
-      const type = body.querySelector("#fType").value;
-      S.config.wheelFields.push({ id: uid(), type, label: "", hours: 2, weight: 1 });
-      renderFList();
-    };
-    renderFList();
+  wrap.innerHTML = `
+    <h2>Wheel of Fortune</h2>
+    <div class="toggle-row">
+      <div>
+        <div style="font-weight:700;font-size:14px;">Glücksrad aktivieren</div>
+        <div class="hint" style="margin:2px 0 0;">Zufällige Boni & Handicaps am Ende.</div>
+      </div>
+      <div class="toggle ${S.config.wheelEnabled?'on':''}" id="wheelToggle"><div class="knob"></div></div>
+    </div>
+    <div id="wheelBody"></div>
+  `;
+  wrap.querySelector("#wheelToggle").onclick = () => {
+    S.config.wheelEnabled = !S.config.wheelEnabled;
+    wrap.querySelector("#wheelToggle").classList.toggle("on", S.config.wheelEnabled);
+    renderWheelBody();
+    refreshNavOnly();
   };
-  wrap.querySelector("#wTog").onclick = () => { S.config.wheelEnabled = !S.config.wheelEnabled; renderTabContent(); };
-  renderBody();
+  const body = wrap.querySelector("#wheelBody");
+
+  function renderWheelBody(){
+    if (!S.config.wheelEnabled){ body.innerHTML = ""; return; }
+    body.innerHTML = `
+      <div style="margin-top:14px;">
+        <label class="field-label">Mindestgesamtzeit (h) — darf nie unterschritten werden</label>
+        <input class="num-input" type="number" min="0" max="72" step="1" value="${S.config.minTotalHours}" id="minHoursInput" style="margin-bottom:14px;">
+      </div>
+      <div id="fixedWheelFields"></div>
+      <div id="customFieldsList"></div>
+      <div class="add-field-row">
+        <select id="newFieldType">
+          <option value="bonus">Bonus</option>
+          <option value="handicap">Handicap</option>
+        </select>
+        <button class="btn small" id="addFieldBtn">+ Feld</button>
+      </div>
+    `;
+    body.querySelector("#minHoursInput").oninput = (e) => {
+      S.config.minTotalHours = parseFloat(e.target.value) || 0;
+    };
+
+    const fixedWrap = body.querySelector("#fixedWheelFields");
+    renderFixedFields(fixedWrap);
+
+    const customList = body.querySelector("#customFieldsList");
+    renderCustomFields(customList);
+
+    body.querySelector("#addFieldBtn").onclick = () => {
+      const total = totalFieldCount();
+      if (total >= 10) return;
+      const type = body.querySelector("#newFieldType").value;
+      S.config.customFields.push({ id: uid(), type, label: "", weight: 1 });
+      renderCustomFields(customList);
+      updateFieldButtons(body);
+    };
+    updateFieldButtons(body);
+  }
+
+  function totalFieldCount(){
+    return (S.config.timePlus.enabled?1:0) + (S.config.timeMinus.enabled?1:0) + S.config.customFields.length;
+  }
+
+  function renderFixedFields(container){
+    container.innerHTML = `
+      <div class="field-row">
+        <div class="field-row-top">
+          <span class="type-badge time_plus">Zeit +</span>
+          <div class="toggle ${S.config.timePlus.enabled?'on':''}" id="tpToggle" style="margin-left:auto;"><div class="knob"></div></div>
+        </div>
+        <div class="field-extra">
+          Stunden: <input class="field-mini-input" type="number" min="1" max="24" value="${S.config.timePlus.hours}" id="tpHours">
+          Gewichtung: <input class="field-mini-input" type="number" min="1" max="10" value="${S.config.timePlus.weight}" id="tpWeight">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-row-top">
+          <span class="type-badge time_minus">Zeit −</span>
+          <div class="toggle ${S.config.timeMinus.enabled?'on':''}" id="tmToggle" style="margin-left:auto;"><div class="knob"></div></div>
+        </div>
+        <div class="field-extra">
+          Stunden: <input class="field-mini-input" type="number" min="1" max="24" value="${S.config.timeMinus.hours}" id="tmHours">
+          Gewichtung: <input class="field-mini-input" type="number" min="1" max="10" value="${S.config.timeMinus.weight}" id="tmWeight">
+        </div>
+      </div>
+    `;
+    container.querySelector("#tpToggle").onclick = () => {
+      S.config.timePlus.enabled = !S.config.timePlus.enabled;
+      container.querySelector("#tpToggle").classList.toggle("on", S.config.timePlus.enabled);
+      refreshNavOnly(); updateFieldButtons(body);
+    };
+    container.querySelector("#tmToggle").onclick = () => {
+      S.config.timeMinus.enabled = !S.config.timeMinus.enabled;
+      container.querySelector("#tmToggle").classList.toggle("on", S.config.timeMinus.enabled);
+      refreshNavOnly(); updateFieldButtons(body);
+    };
+    container.querySelector("#tpHours").oninput = e => S.config.timePlus.hours = clamp(parseFloat(e.target.value)||1,1,24);
+    container.querySelector("#tpWeight").oninput = e => S.config.timePlus.weight = clamp(parseInt(e.target.value)||1,1,10);
+    container.querySelector("#tmHours").oninput = e => S.config.timeMinus.hours = clamp(parseFloat(e.target.value)||1,1,24);
+    container.querySelector("#tmWeight").oninput = e => S.config.timeMinus.weight = clamp(parseInt(e.target.value)||1,1,10);
+  }
+
+  function renderCustomFields(container){
+    container.innerHTML = "";
+    S.config.customFields.forEach(f => {
+      const row = document.createElement("div");
+      row.className = "field-row";
+      row.innerHTML = `
+        <div class="field-row-top">
+          <span class="type-badge ${f.type}">${f.type==='bonus'?'Bonus':'Handicap'}</span>
+          <input class="field-label-text" type="text" maxlength="60" placeholder="Beschreibung..." value="${esc(f.label)}">
+          <button class="field-remove">✕</button>
+        </div>
+        <div class="field-extra">
+          Gewichtung: <input class="field-mini-input" type="number" min="1" max="10" value="${f.weight}">
+        </div>
+      `;
+      row.querySelector(".field-label-text").oninput = e => { f.label = e.target.value; refreshNavOnly(); };
+      row.querySelector(".field-mini-input").oninput = e => f.weight = clamp(parseInt(e.target.value)||1,1,10);
+      row.querySelector(".field-remove").onclick = () => {
+        S.config.customFields = S.config.customFields.filter(x => x.id !== f.id);
+        renderCustomFields(container);
+        updateFieldButtons(body);
+        refreshNavOnly();
+      };
+      container.appendChild(row);
+    });
+  }
+
+  function updateFieldButtons(bodyEl){
+    const total = totalFieldCount();
+    const addBtn = bodyEl.querySelector("#addFieldBtn");
+    if (addBtn) addBtn.disabled = total >= 10;
+    bodyEl.querySelectorAll(".field-remove").forEach(b => {
+      b.disabled = total <= 1;
+    });
+  }
+
+  renderWheelBody();
   return wrap;
 }
 
-/* ===================== GAME TABS ===================== */
+/* ===================== GAME TAB 1: Würfeln ===================== */
+
+let diceRolling = false;
 
 function buildGameTab1(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
-  wrap.innerHTML = `<h2>Würfeln</h2><div class="dice-stage">
-    <div class="die" id="dieEl">?</div><div class="die-type-tag">D${S.config.diceType}</div>
-    <div class="pending-badge" id="pBad"></div>
-    <div class="row-btns"><button class="btn primary" id="rollB">Würfeln</button></div></div>
-    <div id="aList"></div>`;
+  wrap.innerHTML = `
+    <h2>Würfeln</h2>
+    <p class="hint">Tippe auf den Würfel, dann weise die Zahl einer Kategorie zu.</p>
+    <div class="dice-stage">
+      <div class="die" id="dieEl">?</div>
+      <div class="die-type-tag">D${S.config.diceType}</div>
+      <div class="pending-badge" id="pendingBadge"></div>
+      <div class="row-btns" style="margin-top:14px;">
+        <button class="btn" id="rollBtn">Würfeln</button>
+        <button class="btn ghost small" id="resetRollsBtn">Würfel zurücksetzen</button>
+      </div>
+    </div>
+    <div class="cat-assign-list" id="assignList"></div>
+  `;
+  renderAssignList(wrap);
+  updatePendingBadge(wrap);
 
-  const renderAList = () => {
-    const list = wrap.querySelector("#aList");
-    list.innerHTML = "";
-    S.config.categories.forEach(c => {
-      const val = S.game.rolls[c.id];
-      const active = val === null && S.game.pendingRoll !== null;
-      const row = document.createElement("div");
-      row.className = "cat-assign-row";
-      row.innerHTML = `<div class="cat-assign-icon">${c.icon||'❓'}</div>
-        <div class="cat-assign-name">${esc(c.text)}</div>
-        <div class="cat-assign-slot ${val?'filled':''} ${active?'assignable':''}">${val||(active?'?':'—')}</div>`;
-      if(active) row.onclick = () => { S.game.rolls[c.id] = S.game.pendingRoll; S.game.pendingRoll = null; renderAList(); renderBottomNav(); };
-      list.appendChild(row);
-    });
-    wrap.querySelector("#pBad").innerHTML = S.game.pendingRoll ? `Gewürfelt: <strong>${S.game.pendingRoll}</strong>` : "Bitte würfeln";
-    wrap.querySelector("#rollB").disabled = S.game.pendingRoll !== null || S.config.categories.every(c=>S.game.rolls[c.id]!==null);
-  };
-
-  wrap.querySelector("#rollB").onclick = () => {
+  wrap.querySelector("#rollBtn").onclick = () => {
+    if (diceRolling) return;
+    if (S.game.pendingRoll !== null) return; // must assign first
+    const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null);
+    if (remaining.length === 0) return;
+    diceRolling = true;
     const die = wrap.querySelector("#dieEl");
     die.classList.add("rolling");
-    setTimeout(() => {
-      const res = Math.floor(Math.random()*S.config.diceType)+1;
-      S.game.pendingRoll = res;
-      die.textContent = res;
-      die.classList.remove("rolling");
-      renderAList();
-    }, 600);
+    const rollBtn = wrap.querySelector("#rollBtn");
+    rollBtn.disabled = true;
+    let ticks = 0;
+    const iv = setInterval(() => {
+      die.textContent = String(1 + Math.floor(Math.random()*S.config.diceType));
+      ticks++;
+      if (ticks > 7){
+        clearInterval(iv);
+        const final = 1 + Math.floor(Math.random()*S.config.diceType);
+        die.textContent = String(final);
+        die.classList.remove("rolling");
+        S.game.pendingRoll = final;
+        diceRolling = false;
+        renderAssignList(wrap);
+        updatePendingBadge(wrap);
+        rollBtn.disabled = true;
+      }
+    }, 70);
   };
-  renderAList();
+
+  wrap.querySelector("#resetRollsBtn").onclick = () => {
+    if (!confirm("Alle gewürfelten Zahlen zurücksetzen? (Die Config bleibt erhalten)")) return;
+    S.config.categories.forEach(c => S.game.rolls[c.id] = null);
+    S.game.pendingRoll = null;
+    renderAssignList(wrap);
+    updatePendingBadge(wrap);
+    refreshNavOnly();
+  };
+
   return wrap;
 }
 
-function computeBaseHours(){
-  if (S.config.timeMode === "fixed") S.game.baseHours = S.config.fixedHours;
-  else {
-    const sum = S.config.categories.reduce((a,c)=>a+(S.game.rolls[c.id]||0), 0);
-    S.game.baseHours = Math.round(sum * SLIDER_STEPS[S.config.dynamicFactorIdx].factor * 10)/10;
+function renderAssignList(wrap){
+  const list = wrap.querySelector("#assignList");
+  list.innerHTML = "";
+  S.config.categories.forEach(cat => {
+    const val = S.game.rolls[cat.id];
+    const row = document.createElement("div");
+    row.className = "cat-assign-row";
+    const assignable = val === null && S.game.pendingRoll !== null;
+    row.innerHTML = `
+      <div class="cat-assign-icon">${cat.icon}</div>
+      <div class="cat-assign-name">${esc(cat.text)}</div>
+      <div class="cat-assign-slot ${val!==null?'filled':''} ${assignable?'assignable':''}">${val!==null?val:(assignable?'?':'—')}</div>
+    `;
+    if (assignable){
+      row.querySelector(".cat-assign-slot").onclick = () => {
+        S.game.rolls[cat.id] = S.game.pendingRoll;
+        S.game.pendingRoll = null;
+        renderAssignList(wrap);
+        updatePendingBadge(wrap);
+        refreshNavOnly();
+      };
+    }
+    list.appendChild(row);
+  });
+  const rollBtn = wrap.querySelector("#rollBtn");
+  const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null).length;
+  rollBtn.disabled = S.game.pendingRoll !== null || remaining === 0;
+}
+
+function updatePendingBadge(wrap){
+  const badge = wrap.querySelector("#pendingBadge");
+  if (S.game.pendingRoll !== null){
+    badge.innerHTML = `Gewürfelt: <strong>${S.game.pendingRoll}</strong> — tippe auf eine Kategorie, um zuzuweisen.`;
+  } else {
+    const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null).length;
+    badge.innerHTML = remaining === 0 ? `Alle Kategorien belegt ✔` : `Bereit zum Würfeln.`;
   }
-  S.game.totalHours = S.game.baseHours;
+}
+
+/* ===================== GAME TAB 2: Zeit ===================== */
+
+function computeBaseHours(){
+  let base;
+  if (S.config.timeMode === "fixed"){
+    base = S.config.fixedHours;
+  } else {
+    const sum = S.config.categories.reduce((acc,c) => acc + (S.game.rolls[c.id]||0), 0);
+    base = sum * S.config.dynamicFactor;
+  }
+  S.game.baseHours = base;
+  S.game.totalHours = base;
 }
 
 function buildGameTab2(){
+  if (S.game.baseHours === null) computeBaseHours();
   const wrap = document.createElement("div");
   wrap.className = "panel";
-  wrap.innerHTML = `<div class="time-hero">
-    <div class="big-num">${S.game.baseHours}h</div>
-    <div class="unit">Stunden Basis-Zeit</div>
-  </div>`;
+  if (S.config.timeMode === "fixed"){
+    wrap.innerHTML = `
+      <h2>Zeit</h2>
+      <div class="time-hero">
+        <div class="big-num">${fmtHours(S.game.baseHours)}</div>
+        <div class="unit">Stunden Zeit (feste Zeit)</div>
+      </div>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <h2>Zeit</h2>
+      <p class="hint">Summe der gewürfelten Zahlen × Faktor ${S.config.dynamicFactor}.</p>
+      <div class="sum-visual" id="sumVisual"></div>
+      <div class="time-hero">
+        <div class="big-num" id="sumTotal">0</div>
+        <div class="unit">Stunden Zeit (Basis)</div>
+      </div>
+    `;
+    const sumVisual = wrap.querySelector("#sumVisual");
+    const rolls = S.config.categories.map(c => S.game.rolls[c.id]);
+    rolls.forEach((r, i) => {
+      const chip = document.createElement("span");
+      chip.className = "sum-chip";
+      chip.textContent = r;
+      sumVisual.appendChild(chip);
+      if (i < rolls.length-1){
+        const op = document.createElement("span");
+        op.className = "sum-op";
+        op.textContent = "+";
+        sumVisual.appendChild(op);
+      }
+    });
+    setTimeout(() => {
+      sumVisual.querySelectorAll(".sum-chip").forEach((c, i) => {
+        setTimeout(() => c.classList.add("show"), i*120);
+      });
+      setTimeout(() => {
+        wrap.querySelector("#sumTotal").textContent = fmtHours(S.game.baseHours);
+      }, rolls.length*120 + 200);
+    }, 50);
+  }
   return wrap;
 }
+
+function fmtHours(h){
+  const r = Math.round(h*10)/10;
+  return (r % 1 === 0) ? String(r) : String(r);
+}
+
+/* ===================== GAME TAB 3: Wheel ===================== */
 
 function buildGameTab3(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
-  if(!S.config.wheelEnabled) { wrap.innerHTML = "Wheel deaktiviert. Weiter klicken."; return wrap; }
 
-  wrap.innerHTML = `<h2>Wheel of Fortune</h2>
+  if (!S.config.wheelEnabled){
+    wrap.innerHTML = `
+      <h2>Wheel of Fortune</h2>
+      <div class="wheel-empty-msg">Das Glücksrad ist für dieses Spiel deaktiviert. Weiter zur Zusammenfassung.</div>
+    `;
+    return wrap;
+  }
+
+  wrap.innerHTML = `
+    <h2>Wheel of Fortune</h2>
+    <p class="hint">Dreh das Rad für zufällige Boni & Handicaps.</p>
     <div class="wheel-stage">
-      <div class="wheel-wrap"><div class="wheel-pointer"></div><div id="wSvg"></div><div class="wheel-center-dot"></div></div>
-      <div class="wheel-result-banner" id="wRes"></div>
-      <div class="row-btns"><button class="btn primary full" id="spinB">${S.game.hasSpun?'Spin again!':'Spin!'}</button></div>
-    </div><div id="resL"></div>`;
+      <div class="wheel-wrap">
+        <div class="wheel-pointer"></div>
+        <div class="wheel-svg-holder" id="wheelSvgHolder"></div>
+        <div class="wheel-center-dot"></div>
+      </div>
+      <div class="wheel-result-banner" id="wheelResultBanner"></div>
+      <div class="row-btns" style="margin-top:16px;">
+        <button class="btn primary" id="spinBtn">Spin!</button>
+        <button class="btn ghost" id="getMeOutBtn">Get me out</button>
+      </div>
+    </div>
+    <div class="result-list" id="resultList"></div>
+  `;
 
-  const pool = S.game.wheelPool;
-  const drawWheel = () => {
-    const holder = wrap.querySelector("#wSvg");
-    if(pool.length === 0) { holder.innerHTML = "Rad leer"; return; }
-    let paths = "";
-    let angle = 0;
-    const slice = 360 / pool.length;
-    pool.forEach((f, i) => {
-      const p1 = polar(100,100,96, angle);
-      const p2 = polar(100,100,96, angle + slice);
-      const color = ["#3fae63","#e0483f","#2f8f4e","#b8342c"][i%4];
-      paths += `<path d="M100,100 L${p1.x},${p1.y} A96,96 0 0 1 ${p2.x},${p2.y} Z" fill="${color}" stroke="#0a0d13"/>`;
-      angle += slice;
-    });
-    holder.innerHTML = `<svg viewBox="0 0 200 200"><g id="rotor" style="transform-origin:100px 100px;">${paths}</g></svg>`;
+  renderWheelSVG(wrap);
+  renderResultList(wrap);
+  updateSpinButton(wrap);
+
+  wrap.querySelector("#getMeOutBtn").onclick = () => {
+    S.game.gotMeOut = true;
+    S.gameTab = 4; S.maxReachedGameTab = Math.max(S.maxReachedGameTab, 4);
+    render();
   };
 
-  const polar = (cx,cy,r,deg) => {
-    const rad = (deg-90)*Math.PI/180;
-    return { x: cx+r*Math.cos(rad), y: cy+r*Math.sin(rad) };
-  };
+  wrap.querySelector("#spinBtn").onclick = () => spinWheel(wrap);
 
-  wrap.querySelector("#spinB").onclick = () => {
-    if(pool.length === 0) return;
-    const rotor = wrap.querySelector("#rotor");
-    const winnerIdx = Math.floor(Math.random()*pool.length);
-    const winner = pool[winnerIdx];
-    const rotation = 1440 + (360 - (winnerIdx * (360/pool.length)));
-    rotor.style.transition = "transform 3s cubic-bezier(0.15, 0, 0.15, 1)";
-    rotor.style.transform = `rotate(${rotation}deg)`;
-
-    setTimeout(() => {
-      S.game.hasSpun = true;
-      if(winner.type.startsWith("time")) {
-        const delta = winner.type === "time_plus" ? winner.hours : -winner.hours;
-        S.game.totalHours += delta;
-        S.game.timeLog.push(`${winner.label || winner.type}: ${delta}h`);
-      }
-      S.game.wheelResults.push(winner);
-      S.game.wheelPool.splice(winnerIdx, 1);
-      renderTabContent();
-      renderBottomNav();
-    }, 3100);
-  };
-
-  drawWheel();
   return wrap;
 }
+
+function updateSpinButton(wrap){
+  const btn = wrap.querySelector("#spinBtn");
+  if (!btn) return;
+  btn.disabled = S.game.wheelPool.length === 0;
+}
+
+function fieldDisplayLabel(f){
+  if (f.type === "time_plus") return `Zeit + ${f.hours}h`;
+  if (f.type === "time_minus") return `Zeit − ${f.hours}h`;
+  return f.label || (f.type==="bonus"?"Bonus":"Handicap");
+}
+
+const WHEEL_COLORS = {
+  time_plus: "#3fae63",
+  time_minus: "#e0483f",
+  bonus: "#2f8f4e",
+  handicap: "#b8342c",
+};
+
+function renderWheelSVG(wrap){
+  const holder = wrap.querySelector("#wheelSvgHolder");
+  const pool = S.game.wheelPool;
+  if (pool.length === 0){
+    holder.innerHTML = `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="96" fill="#181e2b" stroke="#262d3d" stroke-width="2"/>
+      <text x="100" y="105" text-anchor="middle" fill="#8892a3" font-size="13">Rad leer</text></svg>`;
+    return;
+  }
+  const totalWeight = pool.reduce((a,f) => a+f.weight, 0);
+  let angle = 0;
+  const cx=100, cy=100, r=96;
+  let paths = "";
+  let labels = "";
+  pool.forEach((f, idx) => {
+    const slice = (f.weight/totalWeight)*360;
+    const start = angle;
+    const end = angle + slice;
+    paths += describeSlice(cx,cy,r,start,end, WHEEL_COLORS[f.type] || "#444", idx);
+    const mid = start + slice/2;
+    labels += sliceLabel(cx,cy,r, mid, fieldDisplayLabel(f));
+    angle = end;
+  });
+  holder.innerHTML = `<svg viewBox="0 0 200 200"><g class="rotor" id="wheelRotor" style="transform:rotate(${S.game.wheelRotationBase}deg);transform-origin:100px 100px;">
+    ${paths}${labels}
+    </g></svg>`;
+}
+
+function polar(cx,cy,r,angleDeg){
+  const rad = (angleDeg-90) * Math.PI/180;
+  return { x: cx + r*Math.cos(rad), y: cy + r*Math.sin(rad) };
+}
+
+function describeSlice(cx,cy,r,start,end,color,idx){
+  const p1 = polar(cx,cy,r,start);
+  const p2 = polar(cx,cy,r,end);
+  const large = (end-start) > 180 ? 1 : 0;
+  return `<path d="M${cx},${cy} L${p1.x.toFixed(2)},${p1.y.toFixed(2)} A${r},${r} 0 ${large} 1 ${p2.x.toFixed(2)},${p2.y.toFixed(2)} Z" fill="${color}" stroke="#0a0d13" stroke-width="1.5" opacity="0.92"/>`;
+}
+
+function sliceLabel(cx,cy,r,angleDeg,text){
+  const p = polar(cx,cy,r*0.62,angleDeg);
+  const short = text.length > 16 ? text.slice(0,14)+"…" : text;
+  return `<text x="${p.x.toFixed(2)}" y="${p.y.toFixed(2)}" fill="#fff" font-size="8.5" font-weight="700" text-anchor="middle" dominant-baseline="middle" transform="rotate(${angleDeg} ${p.x.toFixed(2)} ${p.y.toFixed(2)})">${esc(short)}</text>`;
+}
+
+let wheelSpinning = false;
+
+function spinWheel(wrap){
+  if (wheelSpinning) return;
+  const pool = S.game.wheelPool;
+  if (pool.length === 0) return;
+  wheelSpinning = true;
+  wrap.querySelector("#spinBtn").disabled = true;
+  wrap.querySelector("#getMeOutBtn").disabled = true;
+  wrap.querySelector("#wheelResultBanner").textContent = "";
+
+  const totalWeight = pool.reduce((a,f) => a+f.weight, 0);
+  let r = Math.random()*totalWeight;
+  let winner = pool[0];
+  let cum = 0;
+  let winnerMid = 0;
+  let angle = 0;
+  for (const f of pool){
+    const slice = (f.weight/totalWeight)*360;
+    if (r <= cum+slice){ winner = f; winnerMid = angle + slice/2; break; }
+    cum += slice; angle += slice;
+  }
+
+  const rotor = wrap.querySelector("#wheelRotor");
+  const spins = 5;
+  const targetRotation = spins*360 + (360 - winnerMid) % 360;
+  rotor.style.transition = "transform 2.4s cubic-bezier(.17,.67,.16,1)";
+  requestAnimationFrame(() => {
+    rotor.style.transform = `rotate(${targetRotation}deg) `;
+    rotor.style.transformOrigin = "100px 100px";
+  });
+
+  const onDone = () => {
+    rotor.removeEventListener("transitionend", onDone);
+    applyWheelResult(winner);
+    S.game.wheelPool = S.game.wheelPool.filter(f => f.id !== winner.id);
+    // snap back instantly for next spin
+    rotor.style.transition = "none";
+    S.game.wheelRotationBase = 0;
+    wheelSpinning = false;
+    renderTabContent();
+    renderBottomNav();
+    renderStepNav();
+  };
+  rotor.addEventListener("transitionend", onDone);
+}
+
+function applyWheelResult(field){
+  const label = fieldDisplayLabel(field);
+  if (field.type === "time_plus" || field.type === "time_minus"){
+    const delta = field.type === "time_plus" ? field.hours : -field.hours;
+    const before = S.game.totalHours;
+    let after = before + delta;
+    let clamped = false;
+    if (after < S.config.minTotalHours){ after = S.config.minTotalHours; clamped = true; }
+    S.game.totalHours = after;
+    S.game.timeLog.push({ label, delta: after-before, clamped });
+  }
+  S.game.wheelResults.push({ type: field.type, label });
+}
+
+function renderResultList(wrap){
+  const list = wrap.querySelector("#resultList");
+  if (!list) return;
+  list.innerHTML = "";
+  S.game.wheelResults.forEach(r => {
+    const row = document.createElement("div");
+    row.className = `result-row ${r.type}`;
+    let amt = "";
+    if (r.type === "time_plus" || r.type === "time_minus") {
+      amt = `<span class="amt">${r.type==="time_plus"?"+":"−"}${r.label.replace(/[^0-9.]/g,"")}h</span>`;
+    }
+    row.innerHTML = `<span>${esc(r.label)}</span>${amt}`;
+    list.appendChild(row);
+  });
+}
+
+/* ===================== GAME TAB 4: Zusammenfassung ===================== */
 
 function buildGameTab4(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
-  wrap.innerHTML = `<h2>Zusammenfassung</h2>
-    <div class="final-hero"><div class="big-num">${S.game.totalHours}h</div><div class="unit">Gesamtzeit</div></div>
-    <div class="summary-block"><h3>Aufgaben</h3>${S.config.categories.map(c=>`<div class="summary-cat-row"><span>${c.icon} ${c.text}</span><strong>${S.game.rolls[c.id]}</strong></div>`).join("")}</div>
-    <div class="row-btns"><button class="btn full" id="saveImg">Als Bild speichern</button></div>`;
 
-  wrap.querySelector("#saveImg").onclick = () => {
-    const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-    script.onload = () => {
-      window.html2canvas(wrap, {backgroundColor: "#141924"}).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "strafe.png";
-        link.href = canvas.toDataURL();
-        link.click();
-      });
-    };
-    document.head.appendChild(script);
+  const catRows = S.config.categories.map(c => `
+    <div class="summary-cat-row"><span>${c.icon} ${esc(c.text)}</span><strong>${S.game.rolls[c.id]}</strong></div>
+  `).join("");
+
+  let derivation = "";
+  if (S.config.timeMode === "fixed"){
+    derivation = `Basis (feste Zeit): <strong>${fmtHours(S.game.baseHours)}h</strong>`;
+  } else {
+    const rolls = S.config.categories.map(c => S.game.rolls[c.id]);
+    derivation = `Basis: (${rolls.join(" + ")}) × ${S.config.dynamicFactor} = <strong>${fmtHours(S.game.baseHours)}h</strong>`;
+  }
+  S.game.timeLog.forEach(t => {
+    derivation += `<br>${t.delta>=0?'+':''}${fmtHours(t.delta)}h (${esc(t.label)})${t.clamped?' — Minimum erreicht':''}`;
+  });
+  derivation += `<br><span class="final">= Endzeit: ${fmtHours(S.game.totalHours)}h</span>`;
+
+  const bonusHandicapRows = S.game.wheelResults.filter(r => r.type==="bonus"||r.type==="handicap").map(r => `
+    <div class="result-row ${r.type}"><span>${esc(r.label)}</span></div>
+  `).join("");
+
+  wrap.innerHTML = `
+    <h2>Zusammenfassung</h2>
+    <div class="final-hero">
+      <div class="big-num">${fmtHours(S.game.totalHours)}h</div>
+      <div class="unit">Zeit für den Verlierer</div>
+    </div>
+    <div class="countdown" id="countdownRow"></div>
+    <div class="summary-block">
+      <h3>Aufgaben</h3>
+      ${catRows}
+    </div>
+    <div class="summary-block">
+      <h3>Zeitberechnung</h3>
+      <div class="summary-derivation">${derivation}</div>
+    </div>
+    ${bonusHandicapRows ? `<div class="summary-block"><h3>Boni & Handicaps</h3>${bonusHandicapRows}</div>` : ""}
+    <div class="row-btns" style="margin-top:18px;">
+      <button class="btn full" id="savePngBtn">📷 Als Bild speichern</button>
+    </div>
+    <div class="row-btns" style="margin-top:10px;">
+      <button class="btn ghost full" id="startAgainBtn">Start again</button>
+    </div>
+  `;
+
+  if (S.game.deadline === null){
+    S.game.deadline = Date.now() + S.game.totalHours*3600*1000;
+  }
+  startCountdown(wrap.querySelector("#countdownRow"));
+
+  wrap.querySelector("#savePngBtn").onclick = () => exportSummaryAsPng(wrap);
+  wrap.querySelector("#startAgainBtn").onclick = () => {
+    if (!confirm("Spielstand wirklich neu starten? Die Config bleibt erhalten.")) return;
+    S.game = freshGame();
+    S.gameTab = 1; S.maxReachedGameTab = 1;
+    render();
   };
 
-  if(!S.game.confettiFired) { fireConfetti(); S.game.confettiFired = true; }
+  if (!S.game.confettiFired){
+    S.game.confettiFired = true;
+    setTimeout(fireConfetti, 150);
+  }
+
   return wrap;
 }
 
+let countdownInterval = null;
+function startCountdown(container){
+  if (countdownInterval) clearInterval(countdownInterval);
+  function tick(){
+    const now = Date.now();
+    let diff = Math.max(0, S.game.deadline - now);
+    const d = Math.floor(diff/86400000); diff -= d*86400000;
+    const h = Math.floor(diff/3600000); diff -= h*3600000;
+    const m = Math.floor(diff/60000); diff -= m*60000;
+    const sec = Math.floor(diff/1000);
+    if (!document.body.contains(container)) { clearInterval(countdownInterval); return; }
+    container.innerHTML = `
+      <div class="cd-unit"><div class="val">${d}</div><div class="lbl">Tage</div></div>
+      <div class="cd-unit"><div class="val">${h}</div><div class="lbl">Std</div></div>
+      <div class="cd-unit"><div class="val">${m}</div><div class="lbl">Min</div></div>
+      <div class="cd-unit"><div class="val">${sec}</div><div class="lbl">Sek</div></div>
+    `;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+/* ===================== PNG EXPORT ===================== */
+
+let html2canvasLoaded = false;
+function loadHtml2Canvas(cb){
+  if (window.html2canvas) { cb(); return; }
+  const s = document.createElement("script");
+  s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+  s.onload = cb;
+  s.onerror = () => alert("Bild-Export konnte nicht geladen werden (keine Internetverbindung?).");
+  document.head.appendChild(s);
+}
+function exportSummaryAsPng(panelEl){
+  loadHtml2Canvas(() => {
+    window.html2canvas(panelEl, { backgroundColor: "#141924" }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = "verlierer-bestrafung.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  });
+}
+
 /* ===================== CONFETTI ===================== */
+
 function fireConfetti(){
   const canvas = document.getElementById("confettiCanvas");
   canvas.classList.remove("hidden");
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
   const ctx = canvas.getContext("2d");
-  const pieces = Array.from({length:80}, () => ({
-    x: Math.random()*canvas.width, y: -20,
-    w: 6+Math.random()*6, h: 6+Math.random()*10,
-    color: ["#c8203c","#7a3fc0","#d7a92e"][Math.floor(Math.random()*3)],
-    vy: 2+Math.random()*3, vx: -1+Math.random()*2, rot: Math.random()*360
-  }));
-  let frames = 0;
+  const colors = ["#c8203c","#7a3fc0","#d7a92e","#3fae63","#eef1f6"];
+  const pieces = [];
+  for (let i=0;i<90;i++){
+    pieces.push({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*canvas.height*0.3,
+      w: 5+Math.random()*5,
+      h: 8+Math.random()*6,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vy: 2+Math.random()*3,
+      vx: -1+Math.random()*2,
+      rot: Math.random()*360,
+      vr: -6+Math.random()*12,
+    });
+  }
+  let frame = 0;
+  const maxFrames = 200;
   function loop(){
+    frame++;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     pieces.forEach(p => {
-      p.y += p.vy; p.x += p.vx; p.rot += 5;
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot*Math.PI/180);
       ctx.fillStyle = p.color;
-      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
-      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h); ctx.restore();
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
     });
-    if(frames++ < 200) requestAnimationFrame(loop);
-    else canvas.classList.add("hidden");
+    if (frame < maxFrames){
+      requestAnimationFrame(loop);
+    } else {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      canvas.classList.add("hidden");
+    }
   }
   loop();
 }
 
+/* ===================== HELP MODAL ===================== */
+
+function showHelpModal(){
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box">
+        <h2>Wie funktioniert's?</h2>
+        <p><strong>Config:</strong> Aufgaben festlegen, Würfeltyp wählen, Zeitmodus einstellen, optional das Glücksrad konfigurieren.</p>
+        <ul>
+          <li>Jede Aufgabe bekommt beim Spiel eine gewürfelte Menge.</li>
+          <li>Feste Zeit = fixe Stundenzahl. Dynamische Zeit = Summe der Würfe × Faktor.</li>
+          <li>Das Glücksrad kann die Zeit erhöhen/senken oder Boni & Handicaps geben.</li>
+        </ul>
+        <p><strong>Spiel:</strong> Würfeln → Zeit ansehen → Glücksrad drehen (optional) → Zusammenfassung mit Countdown & Bild-Export.</p>
+        <p>Alles bleibt nur im Speicher – ein Reload setzt alles zurück.</p>
+        <button class="btn full" id="closeModalBtn" style="margin-top:10px;">Verstanden</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") root.innerHTML=""; };
+  document.getElementById("closeModalBtn").onclick = () => root.innerHTML = "";
+}
+
+/* ===================== INIT ===================== */
+
 render();
+
 })();
 </script>
 </body>
