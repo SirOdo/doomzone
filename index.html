@@ -2,277 +2,1519 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Würfeln</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Verlierer-Bestrafung 😈🏈</title>
 <style>
-  :root {
-    --felt: #1b4332;
-    --felt-dark: #143026;
-    --ivory: #f4efe3;
-    --gold: #c99a3f;
-    --gold-soft: #dfc07f;
-    --pip: #a53d33;
-    --wood: #7a5236;
+  :root{
+    --bg:#0a0d13;
+    --bg-alt:#0d1119;
+    --panel:#141924;
+    --panel-2:#181e2b;
+    --border:#262d3d;
+    --text:#eef1f6;
+    --muted:#8892a3;
+    --muted-2:#5b6376;
+    --crimson:#c8203c;
+    --crimson-dim:#7d1526;
+    --crimson-glow:#e63a58;
+    --violet:#7a3fc0;
+    --gold:#d7a92e;
+    --green:#3fae63;
+    --green-dim:#1f3f2b;
+    --red-bad:#e0483f;
+    --red-dim:#3f201f;
+    --focus:#f2c14e;
+    --radius:6px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
-
-  * { box-sizing: border-box; }
-
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
-
-  body {
-    font-family: 'Work Sans', sans-serif;
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
     background:
-      radial-gradient(ellipse at top, rgba(255,255,255,0.04), transparent 60%),
-      var(--felt);
-    background-color: var(--felt);
-    color: var(--ivory);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    overflow-x: hidden;
+      radial-gradient(1200px 600px at 50% -10%, #1a1420 0%, transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:96px;
+  }
+  button{font-family:inherit;cursor:pointer;}
+  input, select{font-family:inherit;}
+  ::selection{background:var(--crimson-dim);color:#fff;}
+  :focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+  .app{max-width:480px;margin:0 auto;padding:0 16px;}
+  @media (min-width:640px){ .app{max-width:640px;padding:0 24px;} }
+
+  /* ---------- Header ---------- */
+  header.top{
+    padding:22px 0 14px;
+    text-align:center;
+  }
+  .logo-row{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    font-size:34px;line-height:1;margin-bottom:6px;
+  }
+  h1.title{
+    font-size:26px;font-weight:800;letter-spacing:-0.01em;margin:0;
+    color:var(--text);
+  }
+  .subtitle{
+    color:var(--muted);font-size:13px;margin-top:4px;
+  }
+  .laces{
+    width:120px;height:10px;margin:14px auto 0;opacity:.55;
   }
 
-  .card {
-    width: 100%;
-    max-width: 420px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
+  .reload-note{
+    text-align:center;font-size:11.5px;color:var(--muted-2);
+    margin-top:10px;padding:0 20px;
   }
 
-  h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    font-size: clamp(2.2rem, 8vw, 2.8rem);
-    margin: 0;
-    letter-spacing: -0.01em;
+  /* ---------- top action bar ---------- */
+  .topbar-actions{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    margin:10px 0 4px;
+  }
+  .link-btn{
+    background:none;border:none;color:var(--muted);font-size:13px;
+    padding:6px 4px;text-decoration:underline;text-decoration-color:var(--border);
+  }
+  .link-btn:hover{color:var(--text);}
+  .link-btn.danger{color:#d98a8a;}
+  .link-btn.danger:hover{color:var(--red-bad);}
+  .help-btn{
+    width:28px;height:28px;border-radius:50%;border:1px solid var(--border);
+    background:var(--panel-2);color:var(--muted);font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex:none;
   }
 
-  .sub {
-    margin: -18px 0 0;
-    font-size: 0.95rem;
-    color: var(--gold-soft);
+  /* ---------- step nav ---------- */
+  .stepnav{margin:18px 0 6px;}
+  .stepnav-row{display:flex;align-items:center;}
+  .step-chip-wrap{display:flex;flex-direction:column;align-items:center;flex:none;position:relative;}
+  .step-chip{
+    width:30px;height:30px;border-radius:50%;
+    border:2px solid var(--border);background:var(--panel);
+    color:var(--muted);font-weight:800;font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .step-chip.reachable{cursor:pointer;}
+  .step-chip.done{background:var(--crimson-dim);border-color:var(--crimson);color:#fff;}
+  .step-chip.current{background:var(--crimson);border-color:var(--crimson-glow);color:#fff;box-shadow:0 0 0 3px rgba(200,32,60,.22);}
+  .step-label{font-size:10.5px;color:var(--muted-2);margin-top:5px;max-width:64px;text-align:center;line-height:1.2;}
+  .step-chip-wrap.current .step-label{color:var(--muted);}
+  .step-line{flex:1;height:2px;background:var(--border);margin:0 2px;position:relative;top:-14px;}
+  .step-line.filled{background:var(--crimson-dim);}
+
+  .down-caption{
+    text-align:center;font-size:12px;color:var(--muted-2);margin:10px 0 0;
+    font-style:italic;
   }
 
-  .scene {
-    width: 140px;
-    height: 140px;
-    perspective: 800px;
-    margin: 12px 0;
+  /* ---------- panels ---------- */
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px 16px;
+    margin-top:16px;
+    position:relative;
   }
-
-  .die {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transform: rotateX(-18deg) rotateY(28deg);
-    transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
-    cursor: pointer;
+  .panel::before, .panel::after{
+    content:"";position:absolute;width:14px;height:14px;
+    border-color:var(--crimson-dim);opacity:.6;
   }
+  .panel::before{top:-1px;left:-1px;border-top:2px solid var(--crimson-dim);border-left:2px solid var(--crimson-dim);}
+  .panel::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--crimson-dim);border-right:2px solid var(--crimson-dim);}
 
-  .die:active { filter: brightness(0.97); }
-
-  .face {
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    background: linear-gradient(155deg, var(--ivory), #e7dfc9);
-    border-radius: 18px;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    padding: 22px;
+  .panel h2{
+    font-size:16px;font-weight:800;margin:0 0 4px;letter-spacing:-0.01em;
   }
+  .panel p.hint{color:var(--muted);font-size:12.5px;margin:0 0 14px;line-height:1.4;}
 
-  .pip {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--pip);
-    justify-self: center;
-    align-self: center;
-    opacity: 0;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.25);
+  /* ---------- category cards ---------- */
+  .cat-card{
+    background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:12px;margin-bottom:10px;
   }
-
-  .face-front  { transform: translateZ(70px); }
-  .face-back   { transform: rotateY(180deg) translateZ(70px); }
-  .face-right  { transform: rotateY(90deg) translateZ(70px); }
-  .face-left   { transform: rotateY(-90deg) translateZ(70px); }
-  .face-top    { transform: rotateX(90deg) translateZ(70px); }
-  .face-bottom { transform: rotateX(-90deg) translateZ(70px); }
-
-  .face[data-value="1"] .pip:nth-child(5) { opacity: 1; }
-
-  .face[data-value="2"] .pip:nth-child(1),
-  .face[data-value="2"] .pip:nth-child(9) { opacity: 1; }
-
-  .face[data-value="3"] .pip:nth-child(1),
-  .face[data-value="3"] .pip:nth-child(5),
-  .face[data-value="3"] .pip:nth-child(9) { opacity: 1; }
-
-  .face[data-value="4"] .pip:nth-child(1),
-  .face[data-value="4"] .pip:nth-child(3),
-  .face[data-value="4"] .pip:nth-child(7),
-  .face[data-value="4"] .pip:nth-child(9) { opacity: 1; }
-
-  .face[data-value="5"] .pip:nth-child(1),
-  .face[data-value="5"] .pip:nth-child(3),
-  .face[data-value="5"] .pip:nth-child(5),
-  .face[data-value="5"] .pip:nth-child(7),
-  .face[data-value="5"] .pip:nth-child(9) { opacity: 1; }
-
-  .face[data-value="6"] .pip:nth-child(1),
-  .face[data-value="6"] .pip:nth-child(3),
-  .face[data-value="6"] .pip:nth-child(4),
-  .face[data-value="6"] .pip:nth-child(6),
-  .face[data-value="6"] .pip:nth-child(7),
-  .face[data-value="6"] .pip:nth-child(9) { opacity: 1; }
-
-  .result {
-    font-size: 1.05rem;
-    min-height: 1.4em;
+  .cat-card-row{display:flex;gap:10px;align-items:flex-start;}
+  .cat-icon-display{
+    width:40px;height:40px;border-radius:var(--radius);background:var(--bg-alt);
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;
+    border:1px solid var(--border);
   }
-
-  .result strong {
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    color: var(--gold-soft);
+  .cat-text-input{
+    flex:1;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
+    border-radius:var(--radius);padding:10px 12px;font-size:14px;min-width:0;
   }
-
-  button {
-    font-family: 'Work Sans', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--felt-dark);
-    background: var(--gold);
-    border: none;
-    border-radius: 999px;
-    padding: 14px 34px;
-    cursor: pointer;
-    transition: transform 0.15s ease, background 0.2s ease;
+  .cat-text-input.err{border-color:var(--red-bad);}
+  .cat-remove{
+    flex:none;width:36px;height:36px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--bg-alt);color:var(--muted);font-size:16px;
   }
-
-  button:hover { background: var(--gold-soft); }
-  button:active { transform: scale(0.96); }
-
-  .history {
-    display: flex;
-    gap: 8px;
-    min-height: 12px;
+  .cat-remove:disabled{opacity:.35;cursor:not-allowed;}
+  .icon-grid{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+  .icon-btn{
+    width:34px;height:34px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--bg-alt);font-size:17px;display:flex;align-items:center;justify-content:center;
   }
-
-  .history span {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(244, 239, 227, 0.25);
+  .icon-btn.active{border-color:var(--crimson);background:var(--crimson-dim);}
+  .cat-error{color:var(--red-bad);font-size:11.5px;margin-top:6px;}
+  .row-btns{display:flex;gap:10px;margin-top:12px;}
+  .btn{
+    border-radius:var(--radius);border:1px solid var(--border);background:var(--panel-2);
+    color:var(--text);padding:10px 16px;font-size:13.5px;font-weight:600;
   }
+  .btn:disabled{opacity:.35;cursor:not-allowed;}
+  .btn.primary{background:var(--crimson);border-color:var(--crimson-glow);color:#fff;}
+  .btn.primary:disabled{background:var(--panel-2);border-color:var(--border);color:var(--muted);}
+  .btn.ghost{background:transparent;}
+  .btn.full{width:100%;}
+  .btn.small{padding:7px 12px;font-size:12.5px;}
 
-  @media (prefers-reduced-motion: reduce) {
-    .die { transition: none; }
+  /* ---------- generic form bits ---------- */
+  .field-label{font-size:12.5px;color:var(--muted);margin-bottom:6px;display:block;font-weight:600;}
+  .num-input{
+    background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
+    border-radius:var(--radius);padding:10px 12px;font-size:15px;width:100%;
   }
+  .choice-grid{display:flex;gap:8px;flex-wrap:wrap;}
+  .choice-btn{
+    border-radius:var(--radius);border:1px solid var(--border);background:var(--panel-2);
+    color:var(--text);padding:12px 0;font-size:14px;font-weight:700;flex:1;min-width:52px;text-align:center;
+  }
+  .choice-btn.active{border-color:var(--crimson);background:var(--crimson-dim);color:#fff;}
+  .radio-row{display:flex;gap:10px;margin-bottom:14px;}
+  .radio-opt{
+    flex:1;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel-2);
+    padding:12px;text-align:center;font-size:13.5px;font-weight:600;color:var(--muted);
+  }
+  .radio-opt.active{border-color:var(--crimson);background:var(--crimson-dim);color:#fff;}
+
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+  .toggle{
+    width:44px;height:26px;border-radius:14px;background:var(--border);position:relative;flex:none;
+    border:1px solid var(--border);
+  }
+  .toggle.on{background:var(--crimson-dim);border-color:var(--crimson);}
+  .toggle .knob{
+    width:20px;height:20px;border-radius:50%;background:#c9cdd6;position:absolute;top:2px;left:2px;
+    transition:left .15s;
+  }
+  .toggle.on .knob{left:22px;background:#fff;}
+
+  .field-row{
+    background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:12px;margin-bottom:10px;
+  }
+  .field-row-top{display:flex;align-items:center;gap:8px;}
+  .type-badge{
+    font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;flex:none;
+  }
+  .type-badge.time_plus{background:var(--green-dim);color:var(--green);}
+  .type-badge.time_minus{background:var(--red-dim);color:var(--red-bad);}
+  .type-badge.bonus{background:var(--green-dim);color:var(--green);}
+  .type-badge.handicap{background:var(--red-dim);color:var(--red-bad);}
+  .field-label-text{flex:1;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
+    border-radius:var(--radius);padding:8px 10px;font-size:13.5px;min-width:0;}
+  .field-mini-input{width:56px;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
+    border-radius:var(--radius);padding:8px 6px;font-size:13px;text-align:center;flex:none;}
+  .field-remove{flex:none;width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--bg-alt);color:var(--muted);font-size:14px;}
+  .field-remove:disabled{opacity:.3;}
+  .field-extra{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+  .add-field-row{display:flex;gap:8px;margin-top:12px;}
+  .add-field-row select{flex:1;background:var(--panel-2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:9px;font-size:13px;}
+
+  /* ---------- bottom nav ---------- */
+  .bottomnav{
+    position:fixed;left:0;right:0;bottom:0;
+    background:linear-gradient(180deg, rgba(10,13,19,0) 0%, rgba(10,13,19,.97) 30%);
+    padding:18px 16px 16px;
+    display:flex;justify-content:center;
+  }
+  .bottomnav-inner{
+    max-width:480px;width:100%;display:flex;gap:10px;
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    padding:10px;
+  }
+  @media (min-width:640px){ .bottomnav-inner{max-width:640px;} }
+  .bottomnav-inner .btn{flex:1;}
+
+  /* ---------- dice ---------- */
+  .dice-stage{display:flex;flex-direction:column;align-items:center;padding:10px 0 18px;}
+  .die{
+    width:86px;height:86px;border-radius:14px;
+    background:linear-gradient(145deg,#1c2230,#12161f);
+    border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:34px;font-weight:900;color:var(--text);
+    box-shadow:0 8px 20px rgba(0,0,0,.4);
+    transition:transform .08s;
+  }
+  .die.rolling{animation:diceshake .55s ease-in-out;}
+  @keyframes diceshake{
+    0%{transform:rotate(0deg) scale(1);}
+    25%{transform:rotate(-14deg) scale(1.04);}
+    50%{transform:rotate(10deg) scale(0.98);}
+    75%{transform:rotate(-6deg) scale(1.03);}
+    100%{transform:rotate(0deg) scale(1);}
+  }
+  .die-type-tag{color:var(--muted);font-size:12px;margin-top:10px;font-weight:600;}
+  .pending-badge{
+    margin-top:14px;font-size:12.5px;color:var(--muted);text-align:center;min-height:18px;
+  }
+  .pending-badge strong{color:var(--gold);font-size:15px;}
+
+  .cat-assign-list{margin-top:6px;}
+  .cat-assign-row{
+    display:flex;align-items:center;gap:10px;padding:10px 8px;border-bottom:1px solid var(--border);
+  }
+  .cat-assign-row:last-child{border-bottom:none;}
+  .cat-assign-icon{font-size:20px;width:28px;text-align:center;flex:none;}
+  .cat-assign-name{flex:1;font-size:14px;}
+  .cat-assign-slot{
+    width:44px;height:36px;border-radius:var(--radius);border:1px dashed var(--border);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;
+    color:var(--muted-2);flex:none;
+  }
+  .cat-assign-slot.filled{border-style:solid;border-color:var(--crimson);color:#fff;background:var(--crimson-dim);}
+  .cat-assign-slot.assignable{border-color:var(--gold);color:var(--gold);cursor:pointer;}
+
+  /* ---------- time tab ---------- */
+  .time-hero{text-align:center;padding:26px 0 8px;}
+  .time-hero .big-num{font-size:56px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
+  .time-hero .unit{font-size:15px;color:var(--muted);margin-top:2px;}
+  .sum-visual{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:14px 0;}
+  .sum-chip{
+    background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:8px 12px;font-weight:800;font-size:15px;color:var(--text);
+    opacity:0;transform:translateY(10px);transition:opacity .4s,transform .4s;
+  }
+  .sum-chip.show{opacity:1;transform:translateY(0);}
+  .sum-op{color:var(--muted-2);font-size:15px;align-self:center;}
+
+  /* ---------- wheel ---------- */
+  .wheel-stage{display:flex;flex-direction:column;align-items:center;padding:6px 0 10px;}
+  .wheel-wrap{position:relative;width:250px;height:250px;}
+  .wheel-pointer{
+    position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;
+    border-top:18px solid var(--gold);z-index:2;
+  }
+  .wheel-svg-holder{width:100%;height:100%;border-radius:50%;overflow:hidden;
+    box-shadow:0 0 0 6px var(--panel-2), 0 0 0 8px var(--border), 0 10px 30px rgba(0,0,0,.5);}
+  .wheel-svg-holder svg{display:block;width:100%;height:100%;}
+  .wheel-svg-holder svg g.rotor{transition:transform 2.4s cubic-bezier(.17,.67,.16,1);}
+  .wheel-center-dot{
+    position:absolute;top:50%;left:50%;width:16px;height:16px;border-radius:50%;
+    background:var(--panel);border:2px solid var(--border);transform:translate(-50%,-50%);z-index:2;
+  }
+  .wheel-result-banner{
+    margin-top:16px;text-align:center;font-size:14px;min-height:20px;font-weight:700;
+  }
+  .wheel-empty-msg{text-align:center;color:var(--muted);font-size:13.5px;padding:20px 0;}
+  .result-list{margin-top:16px;}
+  .result-row{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    padding:9px 12px;border-radius:var(--radius);margin-bottom:6px;font-size:13.5px;font-weight:600;
+  }
+  .result-row.bonus, .result-row.time_plus{background:var(--green-dim);color:var(--green);}
+  .result-row.handicap, .result-row.time_minus{background:var(--red-dim);color:var(--red-bad);}
+  .result-row .amt{font-weight:800;font-variant-numeric:tabular-nums;}
+
+  /* ---------- summary ---------- */
+  .summary-block{margin-top:6px;}
+  .summary-block h3{font-size:13px;color:var(--muted);margin:18px 0 8px;font-weight:700;text-transform:none;}
+  .summary-cat-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .summary-cat-row:last-child{border-bottom:none;}
+  .summary-derivation{
+    background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:12px;font-size:13px;color:var(--muted);line-height:1.7;
+  }
+  .summary-derivation .final{color:var(--gold);font-weight:800;font-size:15px;}
+  .final-hero{text-align:center;padding:8px 0 4px;}
+  .final-hero .big-num{font-size:60px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
+  .countdown{
+    display:flex;justify-content:center;gap:10px;margin:14px 0 4px;
+  }
+  .cd-unit{text-align:center;}
+  .cd-unit .val{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--text);}
+  .cd-unit .lbl{font-size:10.5px;color:var(--muted-2);}
+
+  /* ---------- misc ---------- */
+  .empty-msg{color:var(--muted);font-size:13.5px;text-align:center;padding:16px 0;}
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;
+    padding:20px;z-index:50;
+  }
+  .modal-box{
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    max-width:420px;width:100%;padding:20px;max-height:80vh;overflow-y:auto;
+  }
+  .modal-box h2{margin-top:0;}
+  .modal-box p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  .modal-box ul{font-size:13.5px;color:var(--muted);line-height:1.7;padding-left:18px;}
+  .hidden{display:none !important;}
+  .confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:40;}
 </style>
 </head>
 <body>
 
-  <div class="card">
-    <div>
-      <h1>Würfeln</h1>
-      <p class="sub">Ein Wurf, ein Zufall.</p>
-    </div>
+<div class="app" id="app">
+  <header class="top">
+    <div class="logo-row">😈🏈</div>
+    <h1 class="title">Verlierer-Bestrafung</h1>
+    <div class="subtitle">Würfeln. Drehen. Leiden.</div>
+    <svg class="laces" viewBox="0 0 120 10"><g stroke="#c8203c" stroke-width="1.4">
+      <line x1="5" y1="1" x2="5" y2="9"/><line x1="20" y1="1" x2="20" y2="9"/>
+      <line x1="35" y1="1" x2="35" y2="9"/><line x1="50" y1="1" x2="50" y2="9"/>
+      <line x1="65" y1="1" x2="65" y2="9"/><line x1="80" y1="1" x2="80" y2="9"/>
+      <line x1="95" y1="1" x2="95" y2="9"/><line x1="110" y1="1" x2="110" y2="9"/>
+      <line x1="0" y1="5" x2="120" y2="5" stroke-width="1"/>
+    </g></svg>
+    <div class="reload-note">⚠️ Beim Neuladen der Seite gehen alle Eingaben verloren — nichts wird gespeichert.</div>
+  </header>
 
-    <div class="scene">
-      <div class="die" id="die" role="button" tabindex="0" aria-label="Würfel werfen">
-        <div class="face face-front"  data-value="1"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
-        <div class="face face-back"   data-value="6"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
-        <div class="face face-right"  data-value="3"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
-        <div class="face face-left"   data-value="4"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
-        <div class="face face-top"    data-value="2"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
-        <div class="face face-bottom" data-value="5"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
-      </div>
-    </div>
+  <div class="topbar-actions" id="topbarActions"></div>
 
-    <p class="result" id="result" aria-live="polite">Tippe auf den Würfel oder den Knopf.</p>
+  <div class="stepnav" id="stepNav"></div>
+  <div class="down-caption" id="downCaption"></div>
 
-    <button id="rollBtn">Würfeln</button>
+  <div id="tabContent"></div>
+</div>
 
-    <div class="history" id="history"></div>
-  </div>
+<div class="bottomnav">
+  <div class="bottomnav-inner" id="bottomNav"></div>
+</div>
+
+<div id="modalRoot"></div>
+<canvas class="confetti-canvas hidden" id="confettiCanvas"></canvas>
 
 <script>
-  const die = document.getElementById('die');
-  const result = document.getElementById('result');
-  const rollBtn = document.getElementById('rollBtn');
-  const history = document.getElementById('history');
+(function(){
+"use strict";
 
-  // Zielrotation, um jeweils diese Zahl nach vorne zu drehen
-  const targets = {
-    1: { x: 0,   y: 0   },
-    6: { x: 0,   y: 180 },
-    3: { x: 0,   y: -90 },
-    4: { x: 0,   y: 90  },
-    2: { x: -90, y: 0   },
-    5: { x: 90,  y: 0   },
+/* ===================== STATE ===================== */
+
+function uid(){ return 'id' + Math.random().toString(36).slice(2,9); }
+function clamp(v,min,max){ return Math.min(max, Math.max(min, v)); }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+const ICONS = ["🍺","🌭","🏃","🚴","🥃","🔥","❄️","🎯","🍕","💪"];
+
+function defaultConfig(){
+  return {
+    categories: [
+      { id: uid(), icon:"🍺", text:"Bier trinken" },
+      { id: uid(), icon:"🏃", text:"Liegestütze" },
+      { id: uid(), icon:"🔥", text:"Scharfe Sauce essen" },
+    ],
+    diceType: 6,
+    timeMode: "fixed", // fixed | dynamic
+    fixedHours: 24,
+    dynamicFactor: 1.0,
+    minTotalHours: 0,
+    wheelEnabled: true,
+    timePlus: { enabled:true, hours:2, weight:1 },
+    timeMinus: { enabled:true, hours:2, weight:1 },
+    customFields: [
+      { id: uid(), type:"bonus", label:"Sieger darf 1 Aufgabe streichen", weight:1 },
+      { id: uid(), type:"handicap", label:"Doppelte Menge bei 1 Aufgabe", weight:1 },
+    ],
   };
+}
 
-  let currentX = -18;
-  let currentY = 28;
-  let rolling = false;
-  const rolls = [];
+const S = {
+  page: "config", // config | game
+  config: defaultConfig(),
+  configTab: 1,
+  maxReachedConfigTab: 1,
+  game: null,
+  gameTab: 1,
+  maxReachedGameTab: 1,
+};
 
-  function roll() {
-    if (rolling) return;
-    rolling = true;
-    rollBtn.disabled = true;
+function freshGame(){
+  const rolls = {};
+  S.config.categories.forEach(c => rolls[c.id] = null);
+  return {
+    rolls,
+    pendingRoll: null,
+    rollsMade: 0,
+    baseHours: null,
+    totalHours: null,
+    timeLog: [],
+    wheelPool: buildWheelPool(),
+    wheelResults: [],
+    wheelRotationBase: 0,
+    gotMeOut: false,
+    confettiFired: false,
+    deadline: null,
+  };
+}
 
-    const value = Math.floor(Math.random() * 6) + 1;
-    const target = targets[value];
+function buildWheelPool(){
+  const pool = [];
+  if (S.config.timePlus.enabled) pool.push({ id: uid(), type:"time_plus", hours: S.config.timePlus.hours, weight: S.config.timePlus.weight });
+  if (S.config.timeMinus.enabled) pool.push({ id: uid(), type:"time_minus", hours: S.config.timeMinus.hours, weight: S.config.timeMinus.weight });
+  S.config.customFields.forEach(f => pool.push({ id: uid(), type: f.type, label: f.label, weight: f.weight }));
+  return pool;
+}
 
-    // ein paar zusätzliche volle Umdrehungen für den Schwung
-    const extraX = (2 + Math.floor(Math.random() * 2)) * 360;
-    const extraY = (2 + Math.floor(Math.random() * 2)) * 360;
+/* ===================== VALIDATION ===================== */
 
-    currentX = target.x + extraX * (Math.random() < 0.5 ? 1 : -1);
-    currentY = target.y + extraY * (Math.random() < 0.5 ? 1 : -1);
+function configTab1Valid(){
+  const cats = S.config.categories;
+  if (cats.length < 2) return false;
+  const seen = new Set();
+  for (const c of cats){
+    const t = c.text.trim().toLowerCase();
+    if (!t) return false;
+    if (seen.has(t)) return false;
+    seen.add(t);
+  }
+  return true;
+}
+function configTab2Valid(){ return true; }
+function configTab3Valid(){
+  if (S.config.timeMode === "fixed"){
+    return Number.isFinite(S.config.fixedHours) && S.config.fixedHours >= 1 && S.config.fixedHours <= 72;
+  }
+  return Number.isFinite(S.config.dynamicFactor) && S.config.dynamicFactor > 0;
+}
+function configTab4Valid(){
+  if (!S.config.wheelEnabled) return true;
+  const total = (S.config.timePlus.enabled?1:0) + (S.config.timeMinus.enabled?1:0) + S.config.customFields.length;
+  return total >= 1;
+}
+function configTabValid(n){
+  return [null, configTab1Valid, configTab2Valid, configTab3Valid, configTab4Valid][n]();
+}
 
-    die.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+function gameTab1Valid(){
+  return S.config.categories.every(c => S.game.rolls[c.id] !== null);
+}
+function gameTab2Valid(){ return true; }
+function gameTab3Valid(){
+  if (!S.config.wheelEnabled) return true;
+  return S.game.gotMeOut || S.game.wheelPool.length === 0;
+}
+function gameTabValid(n){
+  return [null, gameTab1Valid, gameTab2Valid, gameTab3Valid, ()=>true][n]();
+}
 
-    setTimeout(() => {
-      result.innerHTML = `Du hast eine <strong>${value}</strong> gewürfelt.`;
-      rolls.push(value);
-      renderHistory();
-      rolling = false;
-      rollBtn.disabled = false;
-    }, 1100);
+/* ===================== NAV LABELS ===================== */
+
+const CONFIG_LABELS = ["Aufgaben","Würfel","Zeit","Glücksrad"];
+const CONFIG_DOWNS = ["1st Down","2nd Down","3rd Down","4th Down"];
+const GAME_LABELS = ["Würfeln","Zeit","Glücksrad","Zusammenfassung"];
+const GAME_DOWNS = ["1st Down","2nd Down","3rd Down","4th Down"];
+
+/* ===================== RENDER: SHELL ===================== */
+
+function render(){
+  renderTopbar();
+  renderStepNav();
+  renderTabContent();
+  renderBottomNav();
+}
+
+function renderTopbar(){
+  const el = document.getElementById("topbarActions");
+  if (S.page === "config"){
+    el.innerHTML = `
+      <button class="link-btn danger" id="btnResetAll">Reset All</button>
+      <button class="help-btn" id="btnHelp" title="Hilfe">?</button>
+    `;
+  } else {
+    el.innerHTML = `
+      <button class="link-btn" id="btnBackToConfig">← Zurück zur Config</button>
+      <button class="help-btn" id="btnHelp" title="Hilfe">?</button>
+    `;
+  }
+  const helpBtn = document.getElementById("btnHelp");
+  if (helpBtn) helpBtn.onclick = showHelpModal;
+  const resetBtn = document.getElementById("btnResetAll");
+  if (resetBtn) resetBtn.onclick = () => {
+    if (confirm("Wirklich ALLES zurücksetzen? Alle Aufgaben, Einstellungen und der Spielstand gehen verloren.")){
+      S.config = defaultConfig();
+      S.configTab = 1; S.maxReachedConfigTab = 1;
+      S.game = null; S.gameTab = 1; S.maxReachedGameTab = 1;
+      S.page = "config";
+      render();
+    }
+  };
+  const backBtn = document.getElementById("btnBackToConfig");
+  if (backBtn) backBtn.onclick = () => { S.page = "config"; render(); };
+}
+
+function renderStepNav(){
+  const nav = document.getElementById("stepNav");
+  const cap = document.getElementById("downCaption");
+  const labels = S.page === "config" ? CONFIG_LABELS : GAME_LABELS;
+  const downs = S.page === "config" ? CONFIG_DOWNS : GAME_DOWNS;
+  const current = S.page === "config" ? S.configTab : S.gameTab;
+  const maxReached = S.page === "config" ? S.maxReachedConfigTab : S.maxReachedGameTab;
+
+  let html = '<div class="stepnav-row">';
+  labels.forEach((label, i) => {
+    const n = i+1;
+    const reachable = n <= maxReached;
+    let cls = "step-chip";
+    if (n < current) cls += " done";
+    if (n === current) cls += " current";
+    if (reachable) cls += " reachable";
+    html += `<div class="step-chip-wrap ${n===current?'current':''}">
+      <div class="${cls}" data-step="${n}" ${reachable?'':'aria-disabled="true"'}>${n < current ? '✓' : n}</div>
+      <div class="step-label">${label}</div>
+    </div>`;
+    if (i < labels.length-1){
+      html += `<div class="step-line ${n < current ? 'filled':''}"></div>`;
+    }
+  });
+  html += '</div>';
+  nav.innerHTML = html;
+  cap.textContent = `🏈 ${downs[current-1]}`;
+
+  nav.querySelectorAll(".step-chip.reachable").forEach(chip => {
+    chip.onclick = () => {
+      const n = parseInt(chip.dataset.step, 10);
+      if (S.page === "config") S.configTab = n; else S.gameTab = n;
+      render();
+    };
+  });
+}
+
+function renderBottomNav(){
+  const el = document.getElementById("bottomNav");
+  if (S.page === "config"){
+    const tab = S.configTab;
+    const valid = configTabValid(tab);
+    let rightBtn;
+    if (tab < 4){
+      rightBtn = `<button class="btn primary" id="navNext" ${valid?'':'disabled'}>Weiter →</button>`;
+    } else {
+      rightBtn = `<button class="btn primary" id="navRoll" ${valid?'':'disabled'}>Let's Roll! 🏈</button>`;
+    }
+    el.innerHTML = `
+      <button class="btn ghost" id="navBack" ${tab===1?'disabled':''}>← Zurück</button>
+      ${rightBtn}
+    `;
+    const back = document.getElementById("navBack");
+    if (back) back.onclick = () => { if (S.configTab>1){ S.configTab--; render(); } };
+    const next = document.getElementById("navNext");
+    if (next) next.onclick = () => { if (configTabValid(S.configTab)){ S.configTab++; S.maxReachedConfigTab = Math.max(S.maxReachedConfigTab, S.configTab); render(); } };
+    const roll = document.getElementById("navRoll");
+    if (roll) roll.onclick = () => {
+      S.game = freshGame();
+      S.page = "game"; S.gameTab = 1; S.maxReachedGameTab = 1;
+      render();
+    };
+  } else {
+    const tab = S.gameTab;
+    const valid = gameTabValid(tab);
+    let rightBtn = tab < 4
+      ? `<button class="btn primary" id="navNext" ${valid?'':'disabled'}>Weiter →</button>`
+      : ``;
+    el.innerHTML = `
+      <button class="btn ghost" id="navBack" ${tab===1?'disabled':''}>← Zurück</button>
+      ${rightBtn}
+    `;
+    const back = document.getElementById("navBack");
+    if (back) back.onclick = () => { if (S.gameTab>1){ S.gameTab--; render(); } };
+    const next = document.getElementById("navNext");
+    if (next) next.onclick = () => {
+      if (!gameTabValid(S.gameTab)) return;
+      if (S.gameTab === 1 && S.game.baseHours === null) computeBaseHours();
+      S.gameTab++; S.maxReachedGameTab = Math.max(S.maxReachedGameTab, S.gameTab);
+      render();
+    };
+  }
+}
+
+function renderTabContent(){
+  const el = document.getElementById("tabContent");
+  el.innerHTML = "";
+  if (S.page === "config"){
+    if (S.configTab===1) el.appendChild(buildConfigTab1());
+    if (S.configTab===2) el.appendChild(buildConfigTab2());
+    if (S.configTab===3) el.appendChild(buildConfigTab3());
+    if (S.configTab===4) el.appendChild(buildConfigTab4());
+  } else {
+    if (S.gameTab===1) el.appendChild(buildGameTab1());
+    if (S.gameTab===2) el.appendChild(buildGameTab2());
+    if (S.gameTab===3) el.appendChild(buildGameTab3());
+    if (S.gameTab===4) el.appendChild(buildGameTab4());
+  }
+}
+
+/* small helper to only refresh nav-dependent bits without full page rebuild */
+function refreshNavOnly(){ renderStepNav(); renderBottomNav(); }
+
+/* ===================== CONFIG TAB 1: Aufgaben ===================== */
+
+function buildConfigTab1(){
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+  wrap.innerHTML = `
+    <h2>Strafaufgaben</h2>
+    <p class="hint">Mindestens 2, maximal 5 Kategorien. Jede bekommt beim Spiel eine gewürfelte Menge.</p>
+    <div id="catList"></div>
+    <div class="row-btns">
+      <button class="btn" id="addCat">+ Kategorie</button>
+    </div>
+  `;
+  const list = wrap.querySelector("#catList");
+  renderCatList(list);
+  wrap.querySelector("#addCat").onclick = () => {
+    if (S.config.categories.length >= 5) return;
+    S.config.categories.push({ id: uid(), icon: ICONS[0], text: "" });
+    renderCatList(list);
+    updateAddRemoveButtons(wrap);
+    refreshNavOnly();
+  };
+  updateAddRemoveButtons(wrap);
+  return wrap;
+}
+
+function renderCatList(list){
+  list.innerHTML = "";
+  S.config.categories.forEach((cat, idx) => {
+    const card = document.createElement("div");
+    card.className = "cat-card";
+    card.dataset.id = cat.id;
+    card.innerHTML = `
+      <div class="cat-card-row">
+        <div class="cat-icon-display">${cat.icon}</div>
+        <input class="cat-text-input" type="text" maxlength="40" placeholder="z. B. Liegestütze" value="${esc(cat.text)}">
+        <button class="cat-remove" title="Entfernen">✕</button>
+      </div>
+      <div class="icon-grid">
+        ${ICONS.map(ic => `<button class="icon-btn ${ic===cat.icon?'active':''}" data-icon="${ic}">${ic}</button>`).join("")}
+      </div>
+      <div class="cat-error hidden"></div>
+    `;
+    const input = card.querySelector(".cat-text-input");
+    input.oninput = () => {
+      cat.text = input.value;
+      validateCatCard(card, cat);
+      refreshNavOnly();
+    };
+    card.querySelectorAll(".icon-btn").forEach(btn => {
+      btn.onclick = () => {
+        cat.icon = btn.dataset.icon;
+        card.querySelector(".cat-icon-display").textContent = cat.icon;
+        card.querySelectorAll(".icon-btn").forEach(b => b.classList.toggle("active", b.dataset.icon===cat.icon));
+      };
+    });
+    card.querySelector(".cat-remove").onclick = () => {
+      if (S.config.categories.length <= 2) return;
+      S.config.categories = S.config.categories.filter(c => c.id !== cat.id);
+      renderCatList(list);
+      updateAddRemoveButtons(list.closest(".panel"));
+      refreshNavOnly();
+    };
+    list.appendChild(card);
+    validateCatCard(card, cat);
+  });
+  updateAddRemoveButtons(list.closest(".panel"));
+}
+
+function validateCatCard(card, cat){
+  const input = card.querySelector(".cat-text-input");
+  const errEl = card.querySelector(".cat-error");
+  const text = cat.text.trim().toLowerCase();
+  let msg = "";
+  if (!text) msg = "Bitte eine Beschreibung eingeben.";
+  else {
+    const dupes = S.config.categories.filter(c => c.text.trim().toLowerCase() === text);
+    if (dupes.length > 1) msg = "Dieser Name existiert schon.";
+  }
+  if (msg){
+    input.classList.add("err"); errEl.textContent = msg; errEl.classList.remove("hidden");
+  } else {
+    input.classList.remove("err"); errEl.classList.add("hidden");
+  }
+}
+
+function updateAddRemoveButtons(panel){
+  if (!panel) return;
+  const addBtn = panel.querySelector("#addCat");
+  if (addBtn) addBtn.disabled = S.config.categories.length >= 5;
+  panel.querySelectorAll(".cat-remove").forEach(b => b.disabled = S.config.categories.length <= 2);
+}
+
+/* ===================== CONFIG TAB 2: Würfel ===================== */
+
+function buildConfigTab2(){
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+  const dice = [4,6,8,10,12,20];
+  wrap.innerHTML = `
+    <h2>Würfeltyp</h2>
+    <p class="hint">Dieser Würfel wird für alle Kategorien verwendet.</p>
+    <div class="choice-grid">
+      ${dice.map(d => `<button class="choice-btn ${d===S.config.diceType?'active':''}" data-d="${d}">D${d}</button>`).join("")}
+    </div>
+  `;
+  wrap.querySelectorAll(".choice-btn").forEach(btn => {
+    btn.onclick = () => {
+      S.config.diceType = parseInt(btn.dataset.d, 10);
+      wrap.querySelectorAll(".choice-btn").forEach(b => b.classList.toggle("active", b===btn));
+    };
+  });
+  return wrap;
+}
+
+/* ===================== CONFIG TAB 3: Zeit ===================== */
+
+function buildConfigTab3(){
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+  wrap.innerHTML = `
+    <h2>Zeit-Konfiguration</h2>
+    <p class="hint">Wie lange hat der Verlierer Zeit, alles zu erledigen?</p>
+    <div class="radio-row">
+      <div class="radio-opt ${S.config.timeMode==='fixed'?'active':''}" data-mode="fixed">Feste Zeit</div>
+      <div class="radio-opt ${S.config.timeMode==='dynamic'?'active':''}" data-mode="dynamic">Dynamische Zeit</div>
+    </div>
+    <div id="modeFields"></div>
+  `;
+  wrap.querySelectorAll(".radio-opt").forEach(opt => {
+    opt.onclick = () => {
+      S.config.timeMode = opt.dataset.mode;
+      wrap.querySelectorAll(".radio-opt").forEach(o => o.classList.toggle("active", o===opt));
+      renderModeFields();
+      refreshNavOnly();
+    };
+  });
+  const modeFields = wrap.querySelector("#modeFields");
+  function renderModeFields(){
+    if (S.config.timeMode === "fixed"){
+      modeFields.innerHTML = `
+        <label class="field-label">Stunden (1–72)</label>
+        <input class="num-input" type="number" min="1" max="72" step="1" value="${S.config.fixedHours}" id="fixedHoursInput">
+      `;
+      modeFields.querySelector("#fixedHoursInput").oninput = (e) => {
+        const v = parseFloat(e.target.value);
+        S.config.fixedHours = v;
+        refreshNavOnly();
+      };
+    } else {
+      modeFields.innerHTML = `
+        <p class="hint" style="margin-top:0;">Endzeit = Summe der gewürfelten Zahlen × Faktor.</p>
+        <label class="field-label">Faktor (Stunden pro Punkt)</label>
+        <input class="num-input" type="number" min="0.5" max="5" step="0.5" value="${S.config.dynamicFactor}" id="factorInput">
+      `;
+      modeFields.querySelector("#factorInput").oninput = (e) => {
+        const v = parseFloat(e.target.value);
+        S.config.dynamicFactor = v;
+        refreshNavOnly();
+      };
+    }
+  }
+  renderModeFields();
+  return wrap;
+}
+
+/* ===================== CONFIG TAB 4: Glücksrad ===================== */
+
+function buildConfigTab4(){
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+  wrap.innerHTML = `
+    <h2>Wheel of Fortune</h2>
+    <div class="toggle-row">
+      <div>
+        <div style="font-weight:700;font-size:14px;">Glücksrad aktivieren</div>
+        <div class="hint" style="margin:2px 0 0;">Zufällige Boni & Handicaps am Ende.</div>
+      </div>
+      <div class="toggle ${S.config.wheelEnabled?'on':''}" id="wheelToggle"><div class="knob"></div></div>
+    </div>
+    <div id="wheelBody"></div>
+  `;
+  wrap.querySelector("#wheelToggle").onclick = () => {
+    S.config.wheelEnabled = !S.config.wheelEnabled;
+    wrap.querySelector("#wheelToggle").classList.toggle("on", S.config.wheelEnabled);
+    renderWheelBody();
+    refreshNavOnly();
+  };
+  const body = wrap.querySelector("#wheelBody");
+
+  function renderWheelBody(){
+    if (!S.config.wheelEnabled){ body.innerHTML = ""; return; }
+    body.innerHTML = `
+      <div style="margin-top:14px;">
+        <label class="field-label">Mindestgesamtzeit (h) — darf nie unterschritten werden</label>
+        <input class="num-input" type="number" min="0" max="72" step="1" value="${S.config.minTotalHours}" id="minHoursInput" style="margin-bottom:14px;">
+      </div>
+      <div id="fixedWheelFields"></div>
+      <div id="customFieldsList"></div>
+      <div class="add-field-row">
+        <select id="newFieldType">
+          <option value="bonus">Bonus</option>
+          <option value="handicap">Handicap</option>
+        </select>
+        <button class="btn small" id="addFieldBtn">+ Feld</button>
+      </div>
+    `;
+    body.querySelector("#minHoursInput").oninput = (e) => {
+      S.config.minTotalHours = parseFloat(e.target.value) || 0;
+    };
+
+    const fixedWrap = body.querySelector("#fixedWheelFields");
+    renderFixedFields(fixedWrap);
+
+    const customList = body.querySelector("#customFieldsList");
+    renderCustomFields(customList);
+
+    body.querySelector("#addFieldBtn").onclick = () => {
+      const total = totalFieldCount();
+      if (total >= 10) return;
+      const type = body.querySelector("#newFieldType").value;
+      S.config.customFields.push({ id: uid(), type, label: "", weight: 1 });
+      renderCustomFields(customList);
+      updateFieldButtons(body);
+    };
+    updateFieldButtons(body);
   }
 
-  function renderHistory() {
-    history.innerHTML = '';
-    rolls.slice(-5).forEach(() => {
-      const dot = document.createElement('span');
-      history.appendChild(dot);
+  function totalFieldCount(){
+    return (S.config.timePlus.enabled?1:0) + (S.config.timeMinus.enabled?1:0) + S.config.customFields.length;
+  }
+
+  function renderFixedFields(container){
+    container.innerHTML = `
+      <div class="field-row">
+        <div class="field-row-top">
+          <span class="type-badge time_plus">Zeit +</span>
+          <div class="toggle ${S.config.timePlus.enabled?'on':''}" id="tpToggle" style="margin-left:auto;"><div class="knob"></div></div>
+        </div>
+        <div class="field-extra">
+          Stunden: <input class="field-mini-input" type="number" min="1" max="24" value="${S.config.timePlus.hours}" id="tpHours">
+          Gewichtung: <input class="field-mini-input" type="number" min="1" max="10" value="${S.config.timePlus.weight}" id="tpWeight">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-row-top">
+          <span class="type-badge time_minus">Zeit −</span>
+          <div class="toggle ${S.config.timeMinus.enabled?'on':''}" id="tmToggle" style="margin-left:auto;"><div class="knob"></div></div>
+        </div>
+        <div class="field-extra">
+          Stunden: <input class="field-mini-input" type="number" min="1" max="24" value="${S.config.timeMinus.hours}" id="tmHours">
+          Gewichtung: <input class="field-mini-input" type="number" min="1" max="10" value="${S.config.timeMinus.weight}" id="tmWeight">
+        </div>
+      </div>
+    `;
+    container.querySelector("#tpToggle").onclick = () => {
+      S.config.timePlus.enabled = !S.config.timePlus.enabled;
+      container.querySelector("#tpToggle").classList.toggle("on", S.config.timePlus.enabled);
+      refreshNavOnly(); updateFieldButtons(body);
+    };
+    container.querySelector("#tmToggle").onclick = () => {
+      S.config.timeMinus.enabled = !S.config.timeMinus.enabled;
+      container.querySelector("#tmToggle").classList.toggle("on", S.config.timeMinus.enabled);
+      refreshNavOnly(); updateFieldButtons(body);
+    };
+    container.querySelector("#tpHours").oninput = e => S.config.timePlus.hours = clamp(parseFloat(e.target.value)||1,1,24);
+    container.querySelector("#tpWeight").oninput = e => S.config.timePlus.weight = clamp(parseInt(e.target.value)||1,1,10);
+    container.querySelector("#tmHours").oninput = e => S.config.timeMinus.hours = clamp(parseFloat(e.target.value)||1,1,24);
+    container.querySelector("#tmWeight").oninput = e => S.config.timeMinus.weight = clamp(parseInt(e.target.value)||1,1,10);
+  }
+
+  function renderCustomFields(container){
+    container.innerHTML = "";
+    S.config.customFields.forEach(f => {
+      const row = document.createElement("div");
+      row.className = "field-row";
+      row.innerHTML = `
+        <div class="field-row-top">
+          <span class="type-badge ${f.type}">${f.type==='bonus'?'Bonus':'Handicap'}</span>
+          <input class="field-label-text" type="text" maxlength="60" placeholder="Beschreibung..." value="${esc(f.label)}">
+          <button class="field-remove">✕</button>
+        </div>
+        <div class="field-extra">
+          Gewichtung: <input class="field-mini-input" type="number" min="1" max="10" value="${f.weight}">
+        </div>
+      `;
+      row.querySelector(".field-label-text").oninput = e => { f.label = e.target.value; refreshNavOnly(); };
+      row.querySelector(".field-mini-input").oninput = e => f.weight = clamp(parseInt(e.target.value)||1,1,10);
+      row.querySelector(".field-remove").onclick = () => {
+        S.config.customFields = S.config.customFields.filter(x => x.id !== f.id);
+        renderCustomFields(container);
+        updateFieldButtons(body);
+        refreshNavOnly();
+      };
+      container.appendChild(row);
     });
   }
 
-  die.addEventListener('click', roll);
-  die.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); roll(); }
-  });
-  rollBtn.addEventListener('click', roll);
-</script>
+  function updateFieldButtons(bodyEl){
+    const total = totalFieldCount();
+    const addBtn = bodyEl.querySelector("#addFieldBtn");
+    if (addBtn) addBtn.disabled = total >= 10;
+    bodyEl.querySelectorAll(".field-remove").forEach(b => {
+      b.disabled = total <= 1;
+    });
+  }
 
+  renderWheelBody();
+  return wrap;
+}
+
+/* ===================== GAME TAB 1: Würfeln ===================== */
+
+let diceRolling = false;
+
+function buildGameTab1(){
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+  wrap.innerHTML = `
+    <h2>Würfeln</h2>
+    <p class="hint">Tippe auf den Würfel, dann weise die Zahl einer Kategorie zu.</p>
+    <div class="dice-stage">
+      <div class="die" id="dieEl">?</div>
+      <div class="die-type-tag">D${S.config.diceType}</div>
+      <div class="pending-badge" id="pendingBadge"></div>
+      <div class="row-btns" style="margin-top:14px;">
+        <button class="btn" id="rollBtn">Würfeln</button>
+        <button class="btn ghost small" id="resetRollsBtn">Würfel zurücksetzen</button>
+      </div>
+    </div>
+    <div class="cat-assign-list" id="assignList"></div>
+  `;
+  renderAssignList(wrap);
+  updatePendingBadge(wrap);
+
+  wrap.querySelector("#rollBtn").onclick = () => {
+    if (diceRolling) return;
+    if (S.game.pendingRoll !== null) return; // must assign first
+    const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null);
+    if (remaining.length === 0) return;
+    diceRolling = true;
+    const die = wrap.querySelector("#dieEl");
+    die.classList.add("rolling");
+    const rollBtn = wrap.querySelector("#rollBtn");
+    rollBtn.disabled = true;
+    let ticks = 0;
+    const iv = setInterval(() => {
+      die.textContent = String(1 + Math.floor(Math.random()*S.config.diceType));
+      ticks++;
+      if (ticks > 7){
+        clearInterval(iv);
+        const final = 1 + Math.floor(Math.random()*S.config.diceType);
+        die.textContent = String(final);
+        die.classList.remove("rolling");
+        S.game.pendingRoll = final;
+        diceRolling = false;
+        renderAssignList(wrap);
+        updatePendingBadge(wrap);
+        rollBtn.disabled = true;
+      }
+    }, 70);
+  };
+
+  wrap.querySelector("#resetRollsBtn").onclick = () => {
+    if (!confirm("Alle gewürfelten Zahlen zurücksetzen? (Die Config bleibt erhalten)")) return;
+    S.config.categories.forEach(c => S.game.rolls[c.id] = null);
+    S.game.pendingRoll = null;
+    renderAssignList(wrap);
+    updatePendingBadge(wrap);
+    refreshNavOnly();
+  };
+
+  return wrap;
+}
+
+function renderAssignList(wrap){
+  const list = wrap.querySelector("#assignList");
+  list.innerHTML = "";
+  S.config.categories.forEach(cat => {
+    const val = S.game.rolls[cat.id];
+    const row = document.createElement("div");
+    row.className = "cat-assign-row";
+    const assignable = val === null && S.game.pendingRoll !== null;
+    row.innerHTML = `
+      <div class="cat-assign-icon">${cat.icon}</div>
+      <div class="cat-assign-name">${esc(cat.text)}</div>
+      <div class="cat-assign-slot ${val!==null?'filled':''} ${assignable?'assignable':''}">${val!==null?val:(assignable?'?':'—')}</div>
+    `;
+    if (assignable){
+      row.querySelector(".cat-assign-slot").onclick = () => {
+        S.game.rolls[cat.id] = S.game.pendingRoll;
+        S.game.pendingRoll = null;
+        renderAssignList(wrap);
+        updatePendingBadge(wrap);
+        refreshNavOnly();
+      };
+    }
+    list.appendChild(row);
+  });
+  const rollBtn = wrap.querySelector("#rollBtn");
+  const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null).length;
+  rollBtn.disabled = S.game.pendingRoll !== null || remaining === 0;
+}
+
+function updatePendingBadge(wrap){
+  const badge = wrap.querySelector("#pendingBadge");
+  if (S.game.pendingRoll !== null){
+    badge.innerHTML = `Gewürfelt: <strong>${S.game.pendingRoll}</strong> — tippe auf eine Kategorie, um zuzuweisen.`;
+  } else {
+    const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null).length;
+    badge.innerHTML = remaining === 0 ? `Alle Kategorien belegt ✔` : `Bereit zum Würfeln.`;
+  }
+}
+
+/* ===================== GAME TAB 2: Zeit ===================== */
+
+function computeBaseHours(){
+  let base;
+  if (S.config.timeMode === "fixed"){
+    base = S.config.fixedHours;
+  } else {
+    const sum = S.config.categories.reduce((acc,c) => acc + (S.game.rolls[c.id]||0), 0);
+    base = sum * S.config.dynamicFactor;
+  }
+  S.game.baseHours = base;
+  S.game.totalHours = base;
+}
+
+function buildGameTab2(){
+  if (S.game.baseHours === null) computeBaseHours();
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+  if (S.config.timeMode === "fixed"){
+    wrap.innerHTML = `
+      <h2>Zeit</h2>
+      <div class="time-hero">
+        <div class="big-num">${fmtHours(S.game.baseHours)}</div>
+        <div class="unit">Stunden Zeit (feste Zeit)</div>
+      </div>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <h2>Zeit</h2>
+      <p class="hint">Summe der gewürfelten Zahlen × Faktor ${S.config.dynamicFactor}.</p>
+      <div class="sum-visual" id="sumVisual"></div>
+      <div class="time-hero">
+        <div class="big-num" id="sumTotal">0</div>
+        <div class="unit">Stunden Zeit (Basis)</div>
+      </div>
+    `;
+    const sumVisual = wrap.querySelector("#sumVisual");
+    const rolls = S.config.categories.map(c => S.game.rolls[c.id]);
+    rolls.forEach((r, i) => {
+      const chip = document.createElement("span");
+      chip.className = "sum-chip";
+      chip.textContent = r;
+      sumVisual.appendChild(chip);
+      if (i < rolls.length-1){
+        const op = document.createElement("span");
+        op.className = "sum-op";
+        op.textContent = "+";
+        sumVisual.appendChild(op);
+      }
+    });
+    setTimeout(() => {
+      sumVisual.querySelectorAll(".sum-chip").forEach((c, i) => {
+        setTimeout(() => c.classList.add("show"), i*120);
+      });
+      setTimeout(() => {
+        wrap.querySelector("#sumTotal").textContent = fmtHours(S.game.baseHours);
+      }, rolls.length*120 + 200);
+    }, 50);
+  }
+  return wrap;
+}
+
+function fmtHours(h){
+  const r = Math.round(h*10)/10;
+  return (r % 1 === 0) ? String(r) : String(r);
+}
+
+/* ===================== GAME TAB 3: Wheel ===================== */
+
+function buildGameTab3(){
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+
+  if (!S.config.wheelEnabled){
+    wrap.innerHTML = `
+      <h2>Wheel of Fortune</h2>
+      <div class="wheel-empty-msg">Das Glücksrad ist für dieses Spiel deaktiviert. Weiter zur Zusammenfassung.</div>
+    `;
+    return wrap;
+  }
+
+  wrap.innerHTML = `
+    <h2>Wheel of Fortune</h2>
+    <p class="hint">Dreh das Rad für zufällige Boni & Handicaps.</p>
+    <div class="wheel-stage">
+      <div class="wheel-wrap">
+        <div class="wheel-pointer"></div>
+        <div class="wheel-svg-holder" id="wheelSvgHolder"></div>
+        <div class="wheel-center-dot"></div>
+      </div>
+      <div class="wheel-result-banner" id="wheelResultBanner"></div>
+      <div class="row-btns" style="margin-top:16px;">
+        <button class="btn primary" id="spinBtn">Spin!</button>
+        <button class="btn ghost" id="getMeOutBtn">Get me out</button>
+      </div>
+    </div>
+    <div class="result-list" id="resultList"></div>
+  `;
+
+  renderWheelSVG(wrap);
+  renderResultList(wrap);
+  updateSpinButton(wrap);
+
+  wrap.querySelector("#getMeOutBtn").onclick = () => {
+    S.game.gotMeOut = true;
+    S.gameTab = 4; S.maxReachedGameTab = Math.max(S.maxReachedGameTab, 4);
+    render();
+  };
+
+  wrap.querySelector("#spinBtn").onclick = () => spinWheel(wrap);
+
+  return wrap;
+}
+
+function updateSpinButton(wrap){
+  const btn = wrap.querySelector("#spinBtn");
+  if (!btn) return;
+  btn.disabled = S.game.wheelPool.length === 0;
+}
+
+function fieldDisplayLabel(f){
+  if (f.type === "time_plus") return `Zeit + ${f.hours}h`;
+  if (f.type === "time_minus") return `Zeit − ${f.hours}h`;
+  return f.label || (f.type==="bonus"?"Bonus":"Handicap");
+}
+
+const WHEEL_COLORS = {
+  time_plus: "#3fae63",
+  time_minus: "#e0483f",
+  bonus: "#2f8f4e",
+  handicap: "#b8342c",
+};
+
+function renderWheelSVG(wrap){
+  const holder = wrap.querySelector("#wheelSvgHolder");
+  const pool = S.game.wheelPool;
+  if (pool.length === 0){
+    holder.innerHTML = `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="96" fill="#181e2b" stroke="#262d3d" stroke-width="2"/>
+      <text x="100" y="105" text-anchor="middle" fill="#8892a3" font-size="13">Rad leer</text></svg>`;
+    return;
+  }
+  const totalWeight = pool.reduce((a,f) => a+f.weight, 0);
+  let angle = 0;
+  const cx=100, cy=100, r=96;
+  let paths = "";
+  let labels = "";
+  pool.forEach((f, idx) => {
+    const slice = (f.weight/totalWeight)*360;
+    const start = angle;
+    const end = angle + slice;
+    paths += describeSlice(cx,cy,r,start,end, WHEEL_COLORS[f.type] || "#444", idx);
+    const mid = start + slice/2;
+    labels += sliceLabel(cx,cy,r, mid, fieldDisplayLabel(f));
+    angle = end;
+  });
+  holder.innerHTML = `<svg viewBox="0 0 200 200"><g class="rotor" id="wheelRotor" style="transform:rotate(${S.game.wheelRotationBase}deg);transform-origin:100px 100px;">
+    ${paths}${labels}
+    </g></svg>`;
+}
+
+function polar(cx,cy,r,angleDeg){
+  const rad = (angleDeg-90) * Math.PI/180;
+  return { x: cx + r*Math.cos(rad), y: cy + r*Math.sin(rad) };
+}
+
+function describeSlice(cx,cy,r,start,end,color,idx){
+  const p1 = polar(cx,cy,r,start);
+  const p2 = polar(cx,cy,r,end);
+  const large = (end-start) > 180 ? 1 : 0;
+  return `<path d="M${cx},${cy} L${p1.x.toFixed(2)},${p1.y.toFixed(2)} A${r},${r} 0 ${large} 1 ${p2.x.toFixed(2)},${p2.y.toFixed(2)} Z" fill="${color}" stroke="#0a0d13" stroke-width="1.5" opacity="0.92"/>`;
+}
+
+function sliceLabel(cx,cy,r,angleDeg,text){
+  const p = polar(cx,cy,r*0.62,angleDeg);
+  const short = text.length > 16 ? text.slice(0,14)+"…" : text;
+  return `<text x="${p.x.toFixed(2)}" y="${p.y.toFixed(2)}" fill="#fff" font-size="8.5" font-weight="700" text-anchor="middle" dominant-baseline="middle" transform="rotate(${angleDeg} ${p.x.toFixed(2)} ${p.y.toFixed(2)})">${esc(short)}</text>`;
+}
+
+let wheelSpinning = false;
+
+function spinWheel(wrap){
+  if (wheelSpinning) return;
+  const pool = S.game.wheelPool;
+  if (pool.length === 0) return;
+  wheelSpinning = true;
+  wrap.querySelector("#spinBtn").disabled = true;
+  wrap.querySelector("#getMeOutBtn").disabled = true;
+  wrap.querySelector("#wheelResultBanner").textContent = "";
+
+  const totalWeight = pool.reduce((a,f) => a+f.weight, 0);
+  let r = Math.random()*totalWeight;
+  let winner = pool[0];
+  let cum = 0;
+  let winnerMid = 0;
+  let angle = 0;
+  for (const f of pool){
+    const slice = (f.weight/totalWeight)*360;
+    if (r <= cum+slice){ winner = f; winnerMid = angle + slice/2; break; }
+    cum += slice; angle += slice;
+  }
+
+  const rotor = wrap.querySelector("#wheelRotor");
+  const spins = 5;
+  const targetRotation = spins*360 + (360 - winnerMid) % 360;
+  rotor.style.transition = "transform 2.4s cubic-bezier(.17,.67,.16,1)";
+  requestAnimationFrame(() => {
+    rotor.style.transform = `rotate(${targetRotation}deg) `;
+    rotor.style.transformOrigin = "100px 100px";
+  });
+
+  const onDone = () => {
+    rotor.removeEventListener("transitionend", onDone);
+    applyWheelResult(winner);
+    S.game.wheelPool = S.game.wheelPool.filter(f => f.id !== winner.id);
+    // snap back instantly for next spin
+    rotor.style.transition = "none";
+    S.game.wheelRotationBase = 0;
+    wheelSpinning = false;
+    renderTabContent();
+    renderBottomNav();
+    renderStepNav();
+  };
+  rotor.addEventListener("transitionend", onDone);
+}
+
+function applyWheelResult(field){
+  const label = fieldDisplayLabel(field);
+  if (field.type === "time_plus" || field.type === "time_minus"){
+    const delta = field.type === "time_plus" ? field.hours : -field.hours;
+    const before = S.game.totalHours;
+    let after = before + delta;
+    let clamped = false;
+    if (after < S.config.minTotalHours){ after = S.config.minTotalHours; clamped = true; }
+    S.game.totalHours = after;
+    S.game.timeLog.push({ label, delta: after-before, clamped });
+  }
+  S.game.wheelResults.push({ type: field.type, label });
+}
+
+function renderResultList(wrap){
+  const list = wrap.querySelector("#resultList");
+  if (!list) return;
+  list.innerHTML = "";
+  S.game.wheelResults.forEach(r => {
+    const row = document.createElement("div");
+    row.className = `result-row ${r.type}`;
+    let amt = "";
+    if (r.type === "time_plus" || r.type === "time_minus") {
+      amt = `<span class="amt">${r.type==="time_plus"?"+":"−"}${r.label.replace(/[^0-9.]/g,"")}h</span>`;
+    }
+    row.innerHTML = `<span>${esc(r.label)}</span>${amt}`;
+    list.appendChild(row);
+  });
+}
+
+/* ===================== GAME TAB 4: Zusammenfassung ===================== */
+
+function buildGameTab4(){
+  const wrap = document.createElement("div");
+  wrap.className = "panel";
+
+  const catRows = S.config.categories.map(c => `
+    <div class="summary-cat-row"><span>${c.icon} ${esc(c.text)}</span><strong>${S.game.rolls[c.id]}</strong></div>
+  `).join("");
+
+  let derivation = "";
+  if (S.config.timeMode === "fixed"){
+    derivation = `Basis (feste Zeit): <strong>${fmtHours(S.game.baseHours)}h</strong>`;
+  } else {
+    const rolls = S.config.categories.map(c => S.game.rolls[c.id]);
+    derivation = `Basis: (${rolls.join(" + ")}) × ${S.config.dynamicFactor} = <strong>${fmtHours(S.game.baseHours)}h</strong>`;
+  }
+  S.game.timeLog.forEach(t => {
+    derivation += `<br>${t.delta>=0?'+':''}${fmtHours(t.delta)}h (${esc(t.label)})${t.clamped?' — Minimum erreicht':''}`;
+  });
+  derivation += `<br><span class="final">= Endzeit: ${fmtHours(S.game.totalHours)}h</span>`;
+
+  const bonusHandicapRows = S.game.wheelResults.filter(r => r.type==="bonus"||r.type==="handicap").map(r => `
+    <div class="result-row ${r.type}"><span>${esc(r.label)}</span></div>
+  `).join("");
+
+  wrap.innerHTML = `
+    <h2>Zusammenfassung</h2>
+    <div class="final-hero">
+      <div class="big-num">${fmtHours(S.game.totalHours)}h</div>
+      <div class="unit">Zeit für den Verlierer</div>
+    </div>
+    <div class="countdown" id="countdownRow"></div>
+    <div class="summary-block">
+      <h3>Aufgaben</h3>
+      ${catRows}
+    </div>
+    <div class="summary-block">
+      <h3>Zeitberechnung</h3>
+      <div class="summary-derivation">${derivation}</div>
+    </div>
+    ${bonusHandicapRows ? `<div class="summary-block"><h3>Boni & Handicaps</h3>${bonusHandicapRows}</div>` : ""}
+    <div class="row-btns" style="margin-top:18px;">
+      <button class="btn full" id="savePngBtn">📷 Als Bild speichern</button>
+    </div>
+    <div class="row-btns" style="margin-top:10px;">
+      <button class="btn ghost full" id="startAgainBtn">Start again</button>
+    </div>
+  `;
+
+  if (S.game.deadline === null){
+    S.game.deadline = Date.now() + S.game.totalHours*3600*1000;
+  }
+  startCountdown(wrap.querySelector("#countdownRow"));
+
+  wrap.querySelector("#savePngBtn").onclick = () => exportSummaryAsPng(wrap);
+  wrap.querySelector("#startAgainBtn").onclick = () => {
+    if (!confirm("Spielstand wirklich neu starten? Die Config bleibt erhalten.")) return;
+    S.game = freshGame();
+    S.gameTab = 1; S.maxReachedGameTab = 1;
+    render();
+  };
+
+  if (!S.game.confettiFired){
+    S.game.confettiFired = true;
+    setTimeout(fireConfetti, 150);
+  }
+
+  return wrap;
+}
+
+let countdownInterval = null;
+function startCountdown(container){
+  if (countdownInterval) clearInterval(countdownInterval);
+  function tick(){
+    const now = Date.now();
+    let diff = Math.max(0, S.game.deadline - now);
+    const d = Math.floor(diff/86400000); diff -= d*86400000;
+    const h = Math.floor(diff/3600000); diff -= h*3600000;
+    const m = Math.floor(diff/60000); diff -= m*60000;
+    const sec = Math.floor(diff/1000);
+    if (!document.body.contains(container)) { clearInterval(countdownInterval); return; }
+    container.innerHTML = `
+      <div class="cd-unit"><div class="val">${d}</div><div class="lbl">Tage</div></div>
+      <div class="cd-unit"><div class="val">${h}</div><div class="lbl">Std</div></div>
+      <div class="cd-unit"><div class="val">${m}</div><div class="lbl">Min</div></div>
+      <div class="cd-unit"><div class="val">${sec}</div><div class="lbl">Sek</div></div>
+    `;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+/* ===================== PNG EXPORT ===================== */
+
+let html2canvasLoaded = false;
+function loadHtml2Canvas(cb){
+  if (window.html2canvas) { cb(); return; }
+  const s = document.createElement("script");
+  s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+  s.onload = cb;
+  s.onerror = () => alert("Bild-Export konnte nicht geladen werden (keine Internetverbindung?).");
+  document.head.appendChild(s);
+}
+function exportSummaryAsPng(panelEl){
+  loadHtml2Canvas(() => {
+    window.html2canvas(panelEl, { backgroundColor: "#141924" }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = "verlierer-bestrafung.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  });
+}
+
+/* ===================== CONFETTI ===================== */
+
+function fireConfetti(){
+  const canvas = document.getElementById("confettiCanvas");
+  canvas.classList.remove("hidden");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext("2d");
+  const colors = ["#c8203c","#7a3fc0","#d7a92e","#3fae63","#eef1f6"];
+  const pieces = [];
+  for (let i=0;i<90;i++){
+    pieces.push({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*canvas.height*0.3,
+      w: 5+Math.random()*5,
+      h: 8+Math.random()*6,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vy: 2+Math.random()*3,
+      vx: -1+Math.random()*2,
+      rot: Math.random()*360,
+      vr: -6+Math.random()*12,
+    });
+  }
+  let frame = 0;
+  const maxFrames = 200;
+  function loop(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    if (frame < maxFrames){
+      requestAnimationFrame(loop);
+    } else {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      canvas.classList.add("hidden");
+    }
+  }
+  loop();
+}
+
+/* ===================== HELP MODAL ===================== */
+
+function showHelpModal(){
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box">
+        <h2>Wie funktioniert's?</h2>
+        <p><strong>Config:</strong> Aufgaben festlegen, Würfeltyp wählen, Zeitmodus einstellen, optional das Glücksrad konfigurieren.</p>
+        <ul>
+          <li>Jede Aufgabe bekommt beim Spiel eine gewürfelte Menge.</li>
+          <li>Feste Zeit = fixe Stundenzahl. Dynamische Zeit = Summe der Würfe × Faktor.</li>
+          <li>Das Glücksrad kann die Zeit erhöhen/senken oder Boni & Handicaps geben.</li>
+        </ul>
+        <p><strong>Spiel:</strong> Würfeln → Zeit ansehen → Glücksrad drehen (optional) → Zusammenfassung mit Countdown & Bild-Export.</p>
+        <p>Alles bleibt nur im Speicher – ein Reload setzt alles zurück.</p>
+        <button class="btn full" id="closeModalBtn" style="margin-top:10px;">Verstanden</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") root.innerHTML=""; };
+  document.getElementById("closeModalBtn").onclick = () => root.innerHTML = "";
+}
+
+/* ===================== INIT ===================== */
+
+render();
+
+})();
+</script>
 </body>
 </html>
