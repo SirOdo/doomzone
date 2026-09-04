@@ -416,7 +416,7 @@
 
 <div class="app" id="app">
   <header class="top">
-    <div class="logo-row"><img src="logo.svg" alt="Logo" class="logo-img" onerror="this.outerHTML='😈🏈';"></div>
+    <div class="logo-row"><img src="logo.svg" alt="Logo" class="logo-img" data-fallback-tried="0" onerror="handleLogoError(this)"></div>
     <h1 class="title">You lost!</h1>
     <div class="subtitle">Hier entscheidet sich dein Schicksal</div>
     <svg class="laces" viewBox="0 0 120 10"><g stroke="#c8203c" stroke-width="1.4">
@@ -449,6 +449,17 @@
 <script>
 (function(){
 "use strict";
+
+const GITHUB_LOGO_FALLBACK_URL = "https://raw.githubusercontent.com/SirOdo/fantasy/main/logo.svg";
+window.handleLogoError = function(img){
+  const tried = img.dataset.fallbackTried;
+  if (tried === "0"){
+    img.dataset.fallbackTried = "1";
+    img.src = GITHUB_LOGO_FALLBACK_URL;
+  } else {
+    img.outerHTML = "😈🏈";
+  }
+};
 
 /* ===================== STATE ===================== */
 
