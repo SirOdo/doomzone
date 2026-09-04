@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>Verlierer-Bestrafung 😈🏈</title>
+<title>DOOMZONE 😈🏈</title>
 <style>
   :root{
     --bg:#0a0d13;
@@ -201,7 +201,7 @@
   .choice-btn.active{border-color:var(--crimson);background:var(--crimson-dim);color:#fff;}
   .rec-badge{
     position:absolute;top:-9px;right:-4px;background:var(--gold);color:#241c04;
-    font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:8px;z-index:1;
+    font-size:8px;font-weight:800;padding:2px 5px;border-radius:8px;z-index:1;
     white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4);
   }
   .slider-emoji{text-align:center;font-size:38px;line-height:1;margin-bottom:4px;}
@@ -409,7 +409,25 @@
   .modal-message{font-size:14.5px;color:var(--text);line-height:1.5;margin:4px 0 0;}
   .danger-btn{background:var(--crimson);border-color:var(--crimson-glow);color:#fff;}
   .hidden{display:none !important;}
-  .confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:40;}
+  .fx-canvas{position:fixed;inset:0;pointer-events:none;z-index:40;}
+  .capture-pad{
+    padding:18px 16px;background:var(--panel);border-radius:var(--radius);
+    box-sizing:border-box;overflow:visible;
+  }
+  .doom-flash{
+    position:fixed;inset:0;z-index:39;pointer-events:none;
+    background:radial-gradient(circle at 50% 40%, rgba(200,32,60,.55), rgba(200,32,60,0) 70%);
+    opacity:0;transition:opacity .35s ease-out;
+  }
+  .doom-flash.show{opacity:1;}
+  @keyframes doomShake{
+    0%,100%{transform:translate(0,0);}
+    20%{transform:translate(-3px,2px);}
+    40%{transform:translate(3px,-2px);}
+    60%{transform:translate(-2px,-2px);}
+    80%{transform:translate(2px,2px);}
+  }
+  .doom-shake{animation:doomShake .4s ease-in-out;}
 </style>
 </head>
 <body>
@@ -417,8 +435,8 @@
 <div class="app" id="app">
   <header class="top">
     <div class="logo-row"><img src="logo.svg" alt="Logo" class="logo-img" data-fallback-tried="0" onerror="handleLogoError(this)"></div>
-    <h1 class="title">You lost!</h1>
-    <div class="subtitle">Hier entscheidet sich dein Schicksal</div>
+    <h1 class="title">DOOMZONE</h1>
+    <div class="subtitle">ROLL YOUR FATE</div>
     <svg class="laces" viewBox="0 0 120 10"><g stroke="#c8203c" stroke-width="1.4">
       <line x1="5" y1="1" x2="5" y2="9"/><line x1="20" y1="1" x2="20" y2="9"/>
       <line x1="35" y1="1" x2="35" y2="9"/><line x1="50" y1="1" x2="50" y2="9"/>
@@ -444,13 +462,13 @@
 </div>
 
 <div id="modalRoot"></div>
-<canvas class="confetti-canvas hidden" id="confettiCanvas"></canvas>
+<canvas class="fx-canvas hidden" id="fxCanvas"></canvas>
 
 <script>
 (function(){
 "use strict";
 
-const GITHUB_LOGO_FALLBACK_URL = "https://raw.githubusercontent.com/SirOdo/fantasy/main/logo.svg";
+const GITHUB_LOGO_FALLBACK_URL = "https://raw.githubusercontent.com/SirOdo/fantasy/6321457de60404ae5a02b7db0453772a4ddc7c89/logo.svg";
 window.handleLogoError = function(img){
   const tried = img.dataset.fallbackTried;
   if (tried === "0"){
@@ -583,7 +601,8 @@ function catIcon(cat){
   return (cat.customIcon && cat.customIcon.trim()) ? cat.customIcon.trim() : guessEmoji(cat.text);
 }
 
-const DICE_OPTIONS = [4,6,8,10,12,20];
+const DICE_OPTIONS = [10,12,20];
+const DICE_EMOJI = { 10:"🥱", 12:"😎", 20:"😈" };
 const RECOMMENDED_DICE = 20;
 
 const FACTOR_PRESETS = [
@@ -603,11 +622,11 @@ function defaultConfig(){
       { id: uid(), customIcon:"", text:"Hotdogs essen", multiplier:1 },
     ],
     diceType: null,
-    timeMode: "fixed", // fixed | dynamic
+    timeMode: "dynamic", // fixed | dynamic
     fixedHours: 24,
     dynamicFactorIndex: DEFAULT_FACTOR_INDEX,
     minTotalHours: 0,
-    wheelEnabled: true,
+    wheelEnabled: false,
     wheelFields: [],
   };
 }
@@ -950,8 +969,8 @@ function buildConfigTab2(){
     <p class="hint">Dieser Würfel wird für alle Kategorien verwendet. Bitte auswählen, um fortzufahren.</p>
     <div class="choice-grid">
       ${DICE_OPTIONS.map(d => `<div class="choice-btn-wrap">
-          ${d===RECOMMENDED_DICE ? '<span class="rec-badge">Empfohlen</span>' : ''}
-          <button class="choice-btn ${d===S.config.diceType?'active':''}" data-d="${d}">D${d}</button>
+          ${d===RECOMMENDED_DICE ? '<span class="rec-badge">no risk, no fun</span>' : ''}
+          <button class="choice-btn ${d===S.config.diceType?'active':''}" data-d="${d}">${DICE_EMOJI[d]} D${d}</button>
         </div>`).join("")}
     </div>
   `;
@@ -974,8 +993,8 @@ function buildConfigTab3(){
     <h2>Zeit-Konfiguration</h2>
     <p class="hint">Wie lange hat der Verlierer Zeit, alles zu erledigen?</p>
     <div class="radio-row">
-      <div class="radio-opt ${S.config.timeMode==='fixed'?'active':''}" data-mode="fixed">Feste Zeit</div>
       <div class="radio-opt ${S.config.timeMode==='dynamic'?'active':''}" data-mode="dynamic">Dynamische Zeit</div>
+      <div class="radio-opt ${S.config.timeMode==='fixed'?'active':''}" data-mode="fixed">Feste Zeit</div>
     </div>
     <div id="modeFields"></div>
   `;
@@ -1160,7 +1179,7 @@ function buildGameTab1(){
       <div class="die-type-tag">D${S.config.diceType}</div>
       <div class="pending-badge" id="pendingBadge"></div>
       <div class="row-btns" style="margin-top:14px;">
-        <button class="btn" id="rollBtn">Würfeln</button>
+        <button class="btn primary" id="rollBtn">Würfeln</button>
         <button class="btn ghost small" id="resetRollsBtn">Würfel zurücksetzen</button>
       </div>
     </div>
@@ -1311,11 +1330,19 @@ function buildGameTab2(){
         setTimeout(() => c.classList.add("show"), i*120);
       });
       setTimeout(() => {
-        wrap.querySelector("#sumTotal").textContent = fmtHours(S.game.baseHours) + "h";
+        revealFinalNumber(wrap.querySelector("#sumTotal"), fmtHours(S.game.baseHours) + "h");
       }, rolls.length*120 + 200);
     }, 50);
   }
   return wrap;
+}
+
+function revealFinalNumber(el, text){
+  el.textContent = text;
+  el.classList.add("reveal-num");
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => el.classList.add("show"));
+  });
 }
 
 function fmtHours(h){
@@ -1546,7 +1573,7 @@ function buildGameTab4(){
 
   wrap.innerHTML = `
     <h2>Zusammenfassung</h2>
-    <div id="summaryCapture">
+    <div id="summaryCapture" class="capture-pad">
       <div class="final-hero">
         <div class="big-num">${formatDuration(S.game.totalHours)}</div>
         <div class="unit">Zeit für den Verlierer</div>
@@ -1580,7 +1607,7 @@ function buildGameTab4(){
 
   if (!S.game.confettiFired){
     S.game.confettiFired = true;
-    setTimeout(fireConfetti, 150);
+    setTimeout(() => fireDoomEffect(wrap), 150);
   }
 
   return wrap;
@@ -1603,7 +1630,22 @@ function exportSummaryAsPng(captureEl, btnEl){
   const resetBtn = () => { if (btnEl){ btnEl.disabled = false; btnEl.textContent = originalLabel; } };
 
   loadHtml2Canvas(() => {
-    window.html2canvas(captureEl, { backgroundColor: "#141924", scale: Math.min(2, window.devicePixelRatio || 1.5) })
+    const rect = captureEl.getBoundingClientRect();
+    const fullWidth = Math.ceil(captureEl.scrollWidth);
+    const fullHeight = Math.ceil(captureEl.scrollHeight);
+    window.html2canvas(captureEl, {
+      backgroundColor: "#141924",
+      scale: Math.min(2, window.devicePixelRatio || 1.5),
+      width: fullWidth,
+      height: fullHeight,
+      windowWidth: fullWidth,
+      windowHeight: fullHeight,
+      x: 0,
+      y: 0,
+      scrollX: 0,
+      scrollY: 0,
+      useCORS: true,
+    })
       .then(canvas => {
         canvas.toBlob(async (blob) => {
           if (!blob){ resetBtn(); showAlertModal("Bild konnte nicht erstellt werden."); return; }
@@ -1640,39 +1682,63 @@ function exportSummaryAsPng(captureEl, btnEl){
 
 /* ===================== CONFETTI ===================== */
 
-function fireConfetti(){
-  const canvas = document.getElementById("confettiCanvas");
+function fireDoomEffect(panelEl){
+  // brief crimson vignette flash
+  const flash = document.createElement("div");
+  flash.className = "doom-flash";
+  document.body.appendChild(flash);
+  requestAnimationFrame(() => flash.classList.add("show"));
+  setTimeout(() => flash.classList.remove("show"), 220);
+  setTimeout(() => flash.remove(), 700);
+
+  // subtle screen shake on the summary panel
+  if (panelEl){
+    panelEl.classList.add("doom-shake");
+    setTimeout(() => panelEl.classList.remove("doom-shake"), 420);
+  }
+
+  // rising embers
+  const canvas = document.getElementById("fxCanvas");
   canvas.classList.remove("hidden");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   const ctx = canvas.getContext("2d");
-  const colors = ["#c8203c","#7a3fc0","#d7a92e","#3fae63","#eef1f6"];
-  const pieces = [];
-  for (let i=0;i<90;i++){
-    pieces.push({
+  const colors = ["#ff6a1a","#e0483f","#c8203c","#ff9a3c"];
+  const embers = [];
+  for (let i=0;i<55;i++){
+    embers.push({
       x: Math.random()*canvas.width,
-      y: -20 - Math.random()*canvas.height*0.3,
-      w: 5+Math.random()*5,
-      h: 8+Math.random()*6,
+      y: canvas.height + Math.random()*80,
+      r: 1.5+Math.random()*2.5,
       color: colors[Math.floor(Math.random()*colors.length)],
-      vy: 2+Math.random()*3,
-      vx: -1+Math.random()*2,
-      rot: Math.random()*360,
-      vr: -6+Math.random()*12,
+      vy: -(0.6+Math.random()*1.4),
+      vx: -0.4+Math.random()*0.8,
+      sway: Math.random()*Math.PI*2,
+      swaySpeed: 0.02+Math.random()*0.03,
+      life: 0,
+      maxLife: 140+Math.random()*100,
     });
   }
   let frame = 0;
-  const maxFrames = 200;
+  const maxFrames = 220;
   function loop(){
     frame++;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach(p => {
-      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+    embers.forEach(p => {
+      p.life++;
+      p.sway += p.swaySpeed;
+      p.x += p.vx + Math.sin(p.sway)*0.6;
+      p.y += p.vy;
+      const lifeRatio = p.life / p.maxLife;
+      const alpha = Math.max(0, 1 - lifeRatio) * (0.5+0.5*Math.sin(p.life*0.3));
       ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot*Math.PI/180);
+      ctx.globalAlpha = Math.max(0, alpha);
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 8;
       ctx.fillStyle = p.color;
-      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
       ctx.restore();
     });
     if (frame < maxFrames){
