@@ -56,6 +56,7 @@
     display:flex;align-items:center;justify-content:center;gap:10px;
     font-size:34px;line-height:1;margin-bottom:6px;
   }
+  .logo-img{ height:58px; width:auto; display:block; }
   h1.title{
     font-size:30px;font-weight:900;letter-spacing:0.03em;margin:0;
     color:var(--crimson-glow);text-transform:uppercase;
@@ -379,8 +380,11 @@
   }
   .summary-derivation .final{color:var(--gold);font-weight:800;font-size:15px;}
   .final-hero{text-align:center;padding:8px 0 4px;}
-  .final-hero .big-num{font-size:60px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
-  .days-hours-sub{font-size:15px;color:var(--muted);margin-top:6px;font-weight:600;}
+  .final-hero .big-num{
+    font-size:40px;font-weight:900;color:var(--gold);line-height:1.15;
+    font-variant-numeric:tabular-nums;letter-spacing:0.01em;
+    word-break:break-word;
+  }
   .countdown{
     display:flex;justify-content:center;gap:10px;margin:14px 0 4px;
   }
@@ -412,7 +416,7 @@
 
 <div class="app" id="app">
   <header class="top">
-    <div class="logo-row">😈🏈</div>
+    <div class="logo-row"><img src="logo.svg" alt="Logo" class="logo-img" onerror="this.outerHTML='😈🏈';"></div>
     <h1 class="title">You lost!</h1>
     <div class="subtitle">Hier entscheidet sich dein Schicksal</div>
     <svg class="laces" viewBox="0 0 120 10"><g stroke="#c8203c" stroke-width="1.4">
@@ -1084,7 +1088,7 @@ function buildConfigTab4(){
       row.innerHTML = `
         <div class="field-row-top">
           <select class="type-select ${f.type}" data-role="type">
-            ${Object.keys(FIELD_TYPE_LABELS).map(t => `<option value="${t}" ${t===f.type?'selected':''}>${FIELD_TYPE_LABELS[t]}</option>`).join("")}
+            ${Object.keys(FIELD_TYPE_LABELS).map(t => `<option value="${t}" ${t===f.type?'selected':''} style="color:${(t==='time_plus'||t==='bonus')?'#3fae63':'#e0483f'};background:#181e2b;">${FIELD_TYPE_LABELS[t]}</option>`).join("")}
           </select>
           ${isTime ? `<span class="field-label-text field-label-display" data-role="timeLabelDisplay">${timeFieldLabel(f)}</span>`
                    : `<input class="field-label-text" type="text" maxlength="60" placeholder="Beschreibung..." value="${esc(f.label)}" data-role="label">`}
@@ -1308,6 +1312,20 @@ function fmtHours(h){
   return (r % 1 === 0) ? String(r) : String(r);
 }
 
+function formatDuration(hours){
+  const totalMinutes = Math.max(0, Math.round(hours*60));
+  const days = Math.floor(totalMinutes/1440);
+  const remAfterDays = totalMinutes % 1440;
+  const hrs = Math.floor(remAfterDays/60);
+  const mins = remAfterDays % 60;
+  const parts = [];
+  if (days>0) parts.push(days+"d");
+  if (hrs>0 || days>0) parts.push(hrs+"h");
+  if (mins>0) parts.push(mins+"min");
+  if (parts.length===0) parts.push("0min");
+  return parts.join(" ");
+}
+
 /* ===================== GAME TAB 3: Wheel ===================== */
 
 function buildGameTab3(){
@@ -1515,20 +1533,12 @@ function buildGameTab4(){
     <div class="result-row ${r.type}"><span>${esc(r.label)}</span></div>
   `).join("");
 
-  let daysHoursLine = "";
-  if (S.game.totalHours > 24){
-    const days = Math.floor(S.game.totalHours/24);
-    const remHours = S.game.totalHours - days*24;
-    daysHoursLine = `<div class="days-hours-sub">${days}d ${fmtHours(remHours)}h</div>`;
-  }
-
   wrap.innerHTML = `
     <h2>Zusammenfassung</h2>
     <div id="summaryCapture">
       <div class="final-hero">
-        <div class="big-num">${fmtHours(S.game.totalHours)}h</div>
+        <div class="big-num">${formatDuration(S.game.totalHours)}</div>
         <div class="unit">Zeit für den Verlierer</div>
-        ${daysHoursLine}
       </div>
       <div class="summary-block">
         <h3>Aufgaben</h3>
