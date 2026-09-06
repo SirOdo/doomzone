@@ -56,7 +56,7 @@
     display:flex;align-items:center;justify-content:center;gap:10px;
     font-size:34px;line-height:1;margin-bottom:6px;
   }
-  .logo-img{ height:58px; width:auto; display:block; }
+  .logo-img{ height:68px; width:auto; max-width:92%; display:block; margin:0 auto; }
   h1.title{
     font-size:30px;font-weight:900;letter-spacing:0.03em;margin:0;
     color:var(--crimson-glow);text-transform:uppercase;
@@ -145,34 +145,28 @@
   /* ---------- category cards ---------- */
   .cat-card{
     background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
-    padding:12px;margin-bottom:10px;
+    padding:12px;padding-right:54px;margin-bottom:10px;position:relative;
   }
   .cat-card-row{display:flex;gap:10px;align-items:flex-start;}
-  .cat-icon-display{
-    width:40px;height:40px;border-radius:var(--radius);background:var(--bg-alt);
+  .cat-icon-input{
+    width:44px;height:44px;border-radius:var(--radius);background:var(--bg-alt);
     display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;
-    border:1px solid var(--border);
+    border:1px solid var(--border);color:var(--text);text-align:center;padding:0;
   }
+  .cat-icon-input:focus{border-color:var(--crimson);}
   .cat-text-input{
     flex:1;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
     border-radius:var(--radius);padding:10px 12px;font-size:14px;min-width:0;
   }
   .cat-text-input.err{border-color:var(--red-bad);}
   .cat-remove{
+    position:absolute;top:12px;right:12px;
     flex:none;width:36px;height:36px;border-radius:var(--radius);border:1px solid var(--border);
     background:var(--bg-alt);color:var(--muted);font-size:16px;
   }
   .cat-remove:disabled{opacity:.35;cursor:not-allowed;}
   .icon-override-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
   .icon-override-label{font-size:11.5px;color:var(--muted);flex:1;}
-  .icon-override-input{
-    width:52px;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
-    border-radius:var(--radius);padding:6px;font-size:16px;text-align:center;flex:none;
-  }
-  .multiplier-input{
-    width:64px;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
-    border-radius:var(--radius);padding:6px;font-size:14px;text-align:center;flex:none;font-weight:700;
-  }
   .cat-error{color:var(--red-bad);font-size:11.5px;margin-top:6px;}
   .row-btns{display:flex;gap:10px;margin-top:12px;}
   .btn{
@@ -241,9 +235,9 @@
 
   .field-row{
     background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
-    padding:12px;margin-bottom:10px;
+    padding:12px;padding-right:50px;margin-bottom:10px;position:relative;
   }
-  .field-row-top{display:flex;align-items:center;gap:8px;}
+  .field-row-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .type-badge{
     font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;flex:none;
   }
@@ -257,17 +251,57 @@
   }
   .type-select.time_plus{background:var(--green-dim);color:var(--green);border-color:var(--green-dim);}
   .type-select.time_minus{background:var(--red-dim);color:var(--red-bad);border-color:var(--red-dim);}
+  .type-select.amount_minus{background:var(--green-dim);color:var(--green);border-color:var(--green-dim);}
+  .type-select.amount_plus{background:var(--red-dim);color:var(--red-bad);border-color:var(--red-dim);}
   .type-select.bonus{background:var(--green-dim);color:var(--green);border-color:var(--green-dim);}
   .type-select.handicap{background:var(--red-dim);color:var(--red-bad);border-color:var(--red-dim);}
-  .field-label-display{display:flex;align-items:center;font-weight:700;}
   .field-label-text{flex:1;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
     border-radius:var(--radius);padding:8px 10px;font-size:13.5px;min-width:0;}
   .field-mini-input{width:56px;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
     border-radius:var(--radius);padding:8px 6px;font-size:13px;text-align:center;flex:none;}
-  .field-remove{flex:none;width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);
+  .field-remove{position:absolute;top:12px;right:12px;flex:none;width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);
     background:var(--bg-alt);color:var(--muted);font-size:14px;}
   .field-remove:disabled{opacity:.3;}
   .field-extra{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+  .field-unit-label{color:var(--muted);font-size:13px;flex:none;}
+
+  /* ---------- stepper (+/-) ---------- */
+  .stepper{display:flex;align-items:center;gap:0;flex:none;}
+  .stepper-btn{
+    width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--bg-alt);color:var(--text);font-size:15px;font-weight:700;flex:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stepper-val{
+    min-width:28px;text-align:center;font-weight:800;font-size:14px;color:var(--text);
+    font-variant-numeric:tabular-nums;padding:0 4px;
+  }
+
+  /* ---------- chip picker (presets + custom value) ---------- */
+  .chip-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+  .chip-btn{
+    border-radius:20px;border:1px solid var(--border);background:var(--bg-alt);color:var(--muted);
+    padding:6px 12px;font-size:12.5px;font-weight:700;flex:none;
+  }
+  .chip-btn.active{border-color:var(--crimson);background:var(--crimson-dim);color:#fff;}
+  .chip-custom-input{
+    width:70px;background:var(--bg-alt);border:1px solid var(--border);color:var(--text);
+    border-radius:20px;padding:6px 10px;font-size:12.5px;text-align:center;flex:none;
+  }
+
+  /* ---------- collapsible "Erweitert" disclosure ---------- */
+  .advanced-toggle{
+    background:none;border:none;color:var(--muted);font-size:12px;font-weight:600;
+    padding:8px 0 0;text-align:left;
+  }
+  .advanced-arrow{display:inline-block;width:10px;}
+  .field-advanced{
+    margin-top:8px;padding:10px;background:var(--bg-alt);border:1px solid var(--border);
+    border-radius:var(--radius);display:flex;flex-direction:column;gap:8px;
+  }
+
+  /* ---------- time-bounds section (Spielregeln) ---------- */
+  .time-bounds-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);}
 
   /* ---------- bottom nav ---------- */
   .bottomnav{
@@ -283,6 +317,17 @@
   }
   @media (min-width:640px){ .bottomnav-inner{max-width:640px;} }
   .bottomnav-inner .btn{flex:1;}
+  .btn.soft-disabled{opacity:.4;}
+
+  .toast{
+    position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(8px);
+    max-width:calc(480px - 32px);width:calc(100% - 32px);
+    background:var(--crimson-dim);border:1px solid var(--crimson);color:#fff;
+    font-size:13px;font-weight:600;text-align:center;
+    padding:10px 16px;border-radius:var(--radius);z-index:60;
+    opacity:0;transition:opacity .2s ease, transform .2s ease;pointer-events:none;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
   /* ---------- dice ---------- */
   .dice-stage{display:flex;flex-direction:column;align-items:center;padding:10px 0 18px;}
@@ -294,6 +339,7 @@
     font-size:34px;font-weight:900;color:var(--text);
     box-shadow:0 8px 20px rgba(0,0,0,.4);
     transition:transform .08s;
+    cursor:pointer;
   }
   .die.rolling{animation:diceshake .55s ease-in-out;}
   @keyframes diceshake{
@@ -338,11 +384,16 @@
     opacity:0;transform:translateY(10px);transition:opacity .4s,transform .4s;
   }
   .sum-chip.show{opacity:1;transform:translateY(0);}
+  .reveal-num{
+    display:inline-block;opacity:0;filter:blur(6px);transform:scale(0.85);
+    transition:opacity .5s ease, filter .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
+  }
+  .reveal-num.show{opacity:1;filter:blur(0);transform:scale(1);}
   .sum-op{color:var(--muted-2);font-size:15px;align-self:center;}
 
   /* ---------- wheel ---------- */
   .wheel-stage{display:flex;flex-direction:column;align-items:center;padding:6px 0 10px;}
-  .wheel-wrap{position:relative;width:250px;height:250px;}
+  .wheel-wrap{position:relative;width:250px;height:250px;cursor:pointer;}
   .wheel-pointer{
     position:absolute;top:-6px;left:50%;transform:translateX(-50%);
     width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;
@@ -365,14 +416,17 @@
     display:flex;justify-content:space-between;align-items:center;gap:8px;
     padding:9px 12px;border-radius:var(--radius);margin-bottom:6px;font-size:13.5px;font-weight:600;
   }
-  .result-row.bonus, .result-row.time_plus{background:var(--green-dim);color:var(--green);}
-  .result-row.handicap, .result-row.time_minus{background:var(--red-dim);color:var(--red-bad);}
+  .result-row.bonus, .result-row.time_plus, .result-row.amount_minus{background:var(--green-dim);color:var(--green);}
+  .result-row.handicap, .result-row.time_minus, .result-row.amount_plus{background:var(--red-dim);color:var(--red-bad);}
   .result-row .amt{font-weight:800;font-variant-numeric:tabular-nums;}
 
   /* ---------- summary ---------- */
   .summary-block{margin-top:6px;}
   .summary-block h3{font-size:13px;color:var(--muted);margin:18px 0 8px;font-weight:700;text-transform:none;}
-  .summary-cat-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .summary-cat-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .summary-cat-value{font-variant-numeric:tabular-nums;white-space:nowrap;flex:none;}
+  .amt-good{color:var(--green);font-weight:800;}
+  .amt-bad{color:var(--red-bad);font-weight:800;}
   .summary-cat-row:last-child{border-bottom:none;}
   .summary-derivation{
     background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
@@ -385,12 +439,6 @@
     font-variant-numeric:tabular-nums;letter-spacing:0.01em;
     word-break:break-word;
   }
-  .countdown{
-    display:flex;justify-content:center;gap:10px;margin:14px 0 4px;
-  }
-  .cd-unit{text-align:center;}
-  .cd-unit .val{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--text);}
-  .cd-unit .lbl{font-size:10.5px;color:var(--muted-2);}
 
   /* ---------- misc ---------- */
   .empty-msg{color:var(--muted);font-size:13.5px;text-align:center;padding:16px 0;}
@@ -407,6 +455,16 @@
   .modal-box ul{font-size:13.5px;color:var(--muted);line-height:1.7;padding-left:18px;}
   .modal-box-small{max-width:340px;}
   .modal-message{font-size:14.5px;color:var(--text);line-height:1.5;margin:4px 0 0;}
+  .cat-pick-list{display:flex;flex-direction:column;gap:8px;}
+  .cat-pick-row{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:10px 12px;color:var(--text);
+  }
+  .cat-pick-row:active{border-color:var(--crimson);}
+  .cat-pick-icon{font-size:20px;flex:none;}
+  .cat-pick-name{flex:1;font-size:14px;min-width:0;}
+  .cat-pick-val{font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;flex:none;}
   .danger-btn{background:var(--crimson);border-color:var(--crimson-glow);color:#fff;}
   .hidden{display:none !important;}
   .fx-canvas{position:fixed;inset:0;pointer-events:none;z-index:40;}
@@ -434,8 +492,8 @@
 
 <div class="app" id="app">
   <header class="top">
-    <div class="logo-row"><img src="logo.svg" alt="Logo" class="logo-img" data-fallback-tried="0" onerror="handleLogoError(this)"></div>
-    <h1 class="title">DOOMZONE</h1>
+    <div class="logo-row"><img alt="DOOMZONE" class="logo-img" id="logoImg" data-fallback-tried="0" onload="handleLogoLoad(this)" onerror="handleLogoError(this)"></div>
+    <h1 class="title" id="pageTitle">DOOMZONE</h1>
     <div class="subtitle">ROLL YOUR FATE</div>
     <svg class="laces" viewBox="0 0 120 10"><g stroke="#c8203c" stroke-width="1.4">
       <line x1="5" y1="1" x2="5" y2="9"/><line x1="20" y1="1" x2="20" y2="9"/>
@@ -463,27 +521,106 @@
 
 <div id="modalRoot"></div>
 <canvas class="fx-canvas hidden" id="fxCanvas"></canvas>
+<div class="toast hidden" id="toast"></div>
 
 <script>
 (function(){
 "use strict";
 
-const GITHUB_LOGO_FALLBACK_URL = "https://raw.githubusercontent.com/SirOdo/fantasy/6321457de60404ae5a02b7db0453772a4ddc7c89/logo.svg";
+// Always points at the live "main" branch (not a pinned commit) so it reflects
+// whatever is currently committed in the repo, with a cache-busting timestamp
+// so browsers don't keep serving a stale cached copy after an update.
+const GITHUB_LOGO_FALLBACK_URL = "https://raw.githubusercontent.com/SirOdo/fantasy/main/logo.svg";
+
+window.handleLogoLoad = function(img){
+  // The logo artwork already contains the DOOMZONE wordmark, so hide the
+  // separate text heading once an actual logo image has loaded successfully.
+  const title = document.getElementById("pageTitle");
+  if (title) title.style.display = "none";
+};
+
 window.handleLogoError = function(img){
   const tried = img.dataset.fallbackTried;
   if (tried === "0"){
     img.dataset.fallbackTried = "1";
-    img.src = GITHUB_LOGO_FALLBACK_URL;
+    img.src = GITHUB_LOGO_FALLBACK_URL + "?v=" + Date.now();
   } else {
+    // Both the local file and the GitHub fallback failed: fall back to the
+    // emoji logo, and make sure the DOOMZONE text heading is visible again.
     img.outerHTML = "😈🏈";
+    const title = document.getElementById("pageTitle");
+    if (title) title.style.display = "";
   }
 };
+
+// Cache-bust the logo request so a freshly replaced logo.svg in the repo
+// always shows up instead of a browser-cached old copy. This script tag runs
+// after the <img> element above already exists in the DOM, so no need to
+// wait for DOMContentLoaded.
+(function initLogo(){
+  const logoImg = document.getElementById("logoImg");
+  if (logoImg) logoImg.src = "logo.svg?v=" + Date.now();
+})();
 
 /* ===================== STATE ===================== */
 
 function uid(){ return 'id' + Math.random().toString(36).slice(2,9); }
 function clamp(v,min,max){ return Math.min(max, Math.max(min, v)); }
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Reusable "chip presets + custom value" picker, e.g. Multiplikator, Menge */
+function chipRowHTML(presetValues, currentVal, suffix){
+  return `<div class="chip-row">
+    ${presetValues.map(v => `<button type="button" class="chip-btn ${v===currentVal?'active':''}" data-val="${v}">${v}${suffix||''}</button>`).join("")}
+    <input class="chip-custom-input" type="number" min="1" max="1000" step="1" value="${currentVal}" placeholder="eigener Wert">
+  </div>`;
+}
+function wireChipPicker(container, getVal, setVal){
+  const chips = container.querySelectorAll(".chip-btn");
+  const customInput = container.querySelector(".chip-custom-input");
+  chips.forEach(c => {
+    c.onclick = () => {
+      setVal(parseInt(c.dataset.val, 10));
+      chips.forEach(x => x.classList.toggle("active", x===c));
+      customInput.value = getVal();
+    };
+  });
+  customInput.oninput = () => {
+    setVal(clamp(parseInt(customInput.value, 10) || 1, 1, 1000));
+    chips.forEach(c => c.classList.toggle("active", parseInt(c.dataset.val, 10)===getVal()));
+  };
+}
+
+/* Reusable collapsible "Erweitert" disclosure */
+function advancedToggleHTML(role, label, expanded){
+  return `<button type="button" class="advanced-toggle" data-role="${role}Toggle"><span class="advanced-arrow">${expanded?'▾':'▸'}</span> ${esc(label)}</button>`;
+}
+function wireAdvancedToggle(scopeEl, role){
+  const btn = scopeEl.querySelector(`[data-role="${role}Toggle"]`);
+  const panel = scopeEl.querySelector(`[data-role="${role}Advanced"]`);
+  if (!btn || !panel) return;
+  btn.onclick = () => {
+    const nowHidden = panel.classList.toggle("hidden");
+    btn.querySelector(".advanced-arrow").textContent = nowHidden ? "▸" : "▾";
+  };
+}
+
+/* Reusable +/- stepper (e.g. Gewichtung, Stunden) */
+function stepperHTML(role, value, min, max){
+  return `<div class="stepper" data-role="${role}Stepper">
+    <button type="button" class="stepper-btn" data-role="${role}Dec">−</button>
+    <span class="stepper-val" data-role="${role}Val">${value}</span>
+    <button type="button" class="stepper-btn" data-role="${role}Inc">+</button>
+  </div>`;
+}
+function wireStepper(scopeEl, role, min, max, getVal, setVal, onChange){
+  const dec = scopeEl.querySelector(`[data-role="${role}Dec"]`);
+  const inc = scopeEl.querySelector(`[data-role="${role}Inc"]`);
+  const val = scopeEl.querySelector(`[data-role="${role}Val"]`);
+  if (!dec || !inc || !val) return;
+  dec.onclick = () => { setVal(clamp(getVal()-1, min, max)); val.textContent = getVal(); if (onChange) onChange(); };
+  inc.onclick = () => { setVal(clamp(getVal()+1, min, max)); val.textContent = getVal(); if (onChange) onChange(); };
+}
 
 const FALLBACK_EMOJI = "🎯";
 const EMOJI_KEYWORDS = [
@@ -625,7 +762,10 @@ function defaultConfig(){
     timeMode: "dynamic", // fixed | dynamic
     fixedHours: 24,
     dynamicFactorIndex: DEFAULT_FACTOR_INDEX,
-    minTotalHours: 0,
+    minTimeEnabled: false,
+    minTimeHours: 0,
+    maxTimeEnabled: false,
+    maxTimeHours: 48,
     wheelEnabled: false,
     wheelFields: [],
   };
@@ -658,11 +798,12 @@ function freshGame(){
     wheelRotationBase: 0,
     hasSpunOnce: false,
     confettiFired: false,
+    amountAdjustments: {}, // categoryId -> cumulative +/- from the wheel, applied only to the displayed final amount, never to time
   };
 }
 
 function buildWheelPool(){
-  return S.config.wheelFields.map(f => ({ id: uid(), type: f.type, label: f.label, hours: f.hours, weight: f.weight }));
+  return S.config.wheelFields.map(f => ({ id: uid(), type: f.type, label: f.label, hours: f.hours, amount: f.amount, weight: f.weight }));
 }
 
 /* ===================== VALIDATION ===================== */
@@ -679,19 +820,47 @@ function configTab1Valid(){
   }
   return true;
 }
-function configTab2Valid(){ return S.config.diceType !== null; }
-function configTab3Valid(){
+function configTab2Valid(){
+  // "Spielregeln": Würfeltyp + Zeit-Konfiguration combined
+  if (S.config.diceType === null) return false;
   if (S.config.timeMode === "fixed"){
     return Number.isFinite(S.config.fixedHours) && S.config.fixedHours >= 1 && S.config.fixedHours <= 72;
   }
   return true;
 }
-function configTab4Valid(){
+function configTab3Valid(){
   if (!S.config.wheelEnabled) return true;
   return S.config.wheelFields.length >= 1;
 }
 function configTabValid(n){
-  return [null, configTab1Valid, configTab2Valid, configTab3Valid, configTab4Valid][n]();
+  return [null, configTab1Valid, configTab2Valid, configTab3Valid][n]();
+}
+
+function getConfigStepWarning(n){
+  if (n === 1){
+    const cats = S.config.categories;
+    if (cats.length < 2) return "Du brauchst mindestens 2 Aufgaben.";
+    const seen = new Set();
+    for (const c of cats){
+      const t = c.text.trim().toLowerCase();
+      if (!t) return "Bitte fülle alle Aufgaben-Beschreibungen aus.";
+      if (seen.has(t)) return "Zwei Aufgaben haben denselben Namen — bitte eindeutig benennen.";
+      seen.add(t);
+    }
+    return null;
+  }
+  if (n === 2){
+    if (S.config.diceType === null) return "Bitte wähle zuerst einen Würfeltyp aus.";
+    if (S.config.timeMode === "fixed" && !(Number.isFinite(S.config.fixedHours) && S.config.fixedHours >= 1 && S.config.fixedHours <= 72)){
+      return "Bitte gib eine gültige feste Zeit zwischen 1 und 72 Stunden ein.";
+    }
+    return null;
+  }
+  if (n === 3){
+    if (S.config.wheelEnabled && S.config.wheelFields.length < 1) return "Füge mindestens ein Rad-Feld hinzu, oder deaktiviere das Glücksrad.";
+    return null;
+  }
+  return null;
 }
 
 function gameTab1Valid(){
@@ -708,8 +877,8 @@ function gameTabValid(n){
 
 /* ===================== NAV LABELS ===================== */
 
-const CONFIG_LABELS = ["Aufgaben","Würfel","Zeit","Glücksrad"];
-const CONFIG_DOWNS = ["1st Down","2nd Down","3rd Down","4th Down"];
+const CONFIG_LABELS = ["Aufgaben","Spielregeln","Glücksrad"];
+const CONFIG_DOWNS = ["1st Down","2nd Down","3rd Down"];
 const GAME_LABELS = ["Würfeln","Zeit","Glücksrad","Zusammenfassung"];
 const GAME_DOWNS = ["1st Down","2nd Down","3rd Down","4th Down"];
 
@@ -794,10 +963,10 @@ function renderBottomNav(){
     const tab = S.configTab;
     const valid = configTabValid(tab);
     let rightBtn;
-    if (tab < 4){
-      rightBtn = `<button class="btn primary" id="navNext" ${valid?'':'disabled'}>Weiter →</button>`;
+    if (tab < 3){
+      rightBtn = `<button class="btn primary ${valid?'':'soft-disabled'}" id="navNext">Weiter →</button>`;
     } else {
-      rightBtn = `<button class="btn primary" id="navRoll" ${valid?'':'disabled'}>Let's Roll! 🏈</button>`;
+      rightBtn = `<button class="btn primary ${valid?'':'soft-disabled'}" id="navRoll">Let's Roll! 🏈</button>`;
     }
     el.innerHTML = `
       <button class="btn ghost" id="navBack" ${tab===1?'disabled':''}>← Zurück</button>
@@ -806,9 +975,16 @@ function renderBottomNav(){
     const back = document.getElementById("navBack");
     if (back) back.onclick = () => { if (S.configTab>1){ S.configTab--; render(); } };
     const next = document.getElementById("navNext");
-    if (next) next.onclick = () => { if (configTabValid(S.configTab)){ S.configTab++; S.maxReachedConfigTab = Math.max(S.maxReachedConfigTab, S.configTab); render(); } };
+    if (next) next.onclick = () => {
+      if (configTabValid(S.configTab)){
+        S.configTab++; S.maxReachedConfigTab = Math.max(S.maxReachedConfigTab, S.configTab); render();
+      } else {
+        showToast(getConfigStepWarning(S.configTab));
+      }
+    };
     const roll = document.getElementById("navRoll");
     if (roll) roll.onclick = () => {
+      if (!configTabValid(S.configTab)){ showToast(getConfigStepWarning(S.configTab)); return; }
       S.game = freshGame();
       S.page = "game"; S.gameTab = 1; S.maxReachedGameTab = 1;
       render();
@@ -844,7 +1020,6 @@ function renderTabContent(){
     if (S.configTab===1) el.appendChild(buildConfigTab1());
     if (S.configTab===2) el.appendChild(buildConfigTab2());
     if (S.configTab===3) el.appendChild(buildConfigTab3());
-    if (S.configTab===4) el.appendChild(buildConfigTab4());
   } else {
     if (S.gameTab===1) el.appendChild(buildGameTab1());
     if (S.gameTab===2) el.appendChild(buildGameTab2());
@@ -888,39 +1063,40 @@ function renderCatList(list){
     const card = document.createElement("div");
     card.className = "cat-card";
     card.dataset.id = cat.id;
+    const isCustomMult = (cat.multiplier||1) !== 1;
     card.innerHTML = `
       <div class="cat-card-row">
-        <div class="cat-icon-display">${catIcon(cat)}</div>
+        <input class="cat-icon-input" type="text" maxlength="10" value="${esc(catIcon(cat))}" title="Emoji antippen zum Ändern">
         <input class="cat-text-input" type="text" maxlength="40" placeholder="z. B. Liegestütze" value="${esc(cat.text)}">
         <button class="cat-remove" title="Entfernen">✕</button>
       </div>
-      <div class="icon-override-row">
-        <span class="icon-override-label">Emoji anpassen (optional):</span>
-        <input class="icon-override-input" type="text" maxlength="4" placeholder="${catIcon(cat)}" value="${esc(cat.customIcon||'')}">
-      </div>
-      <div class="icon-override-row">
+      ${advancedToggleHTML("mult", "Erweitert: Multiplikator" + (isCustomMult ? ` (${cat.multiplier}×)` : ""), isCustomMult)}
+      <div class="field-advanced ${isCustomMult ? '' : 'hidden'}" data-role="multAdvanced">
         <span class="icon-override-label">Multiplikator (× Würfelzahl):</span>
-        <input class="multiplier-input" type="number" min="1" max="1000" step="1" value="${cat.multiplier||1}">
+        ${chipRowHTML([1,10,50,100], cat.multiplier||1, "×")}
       </div>
       <div class="cat-error hidden"></div>
     `;
     const input = card.querySelector(".cat-text-input");
-    const iconDisplay = card.querySelector(".cat-icon-display");
-    const overrideInput = card.querySelector(".icon-override-input");
-    const multiplierInput = card.querySelector(".multiplier-input");
+    const iconInput = card.querySelector(".cat-icon-input");
+    wireAdvancedToggle(card, "mult");
+    wireChipPicker(card.querySelector('[data-role="multAdvanced"]'), () => cat.multiplier||1, (v) => { cat.multiplier = v; });
     input.oninput = () => {
       cat.text = input.value;
-      if (!cat.customIcon) iconDisplay.textContent = catIcon(cat);
-      overrideInput.placeholder = catIcon(cat);
+      if (!cat.customIcon || !cat.customIcon.trim()) iconInput.value = catIcon(cat);
       validateCatCard(card, cat);
       refreshNavOnly();
     };
-    overrideInput.oninput = () => {
-      cat.customIcon = overrideInput.value;
-      iconDisplay.textContent = catIcon(cat);
+    iconInput.oninput = () => {
+      // store exactly what's typed, even if momentarily empty, so the user
+      // can actually clear the field before typing their own emoji
+      cat.customIcon = iconInput.value;
     };
-    multiplierInput.oninput = () => {
-      cat.multiplier = clamp(parseInt(multiplierInput.value,10)||1, 1, 1000);
+    iconInput.onblur = () => {
+      if (!iconInput.value.trim()){
+        cat.customIcon = "";
+        iconInput.value = catIcon(cat);
+      }
     };
     card.querySelector(".cat-remove").onclick = () => {
       if (S.config.categories.length <= 2) return;
@@ -963,8 +1139,10 @@ function updateAddRemoveButtons(panel){
 
 function buildConfigTab2(){
   const wrap = document.createElement("div");
-  wrap.className = "panel";
-  wrap.innerHTML = `
+
+  const dicePanel = document.createElement("div");
+  dicePanel.className = "panel";
+  dicePanel.innerHTML = `
     <h2>Würfeltyp</h2>
     <p class="hint">Dieser Würfel wird für alle Kategorien verwendet. Bitte auswählen, um fortzufahren.</p>
     <div class="choice-grid">
@@ -974,22 +1152,17 @@ function buildConfigTab2(){
         </div>`).join("")}
     </div>
   `;
-  wrap.querySelectorAll(".choice-btn").forEach(btn => {
+  dicePanel.querySelectorAll(".choice-btn").forEach(btn => {
     btn.onclick = () => {
       S.config.diceType = parseInt(btn.dataset.d, 10);
-      wrap.querySelectorAll(".choice-btn").forEach(b => b.classList.toggle("active", b===btn));
+      dicePanel.querySelectorAll(".choice-btn").forEach(b => b.classList.toggle("active", b===btn));
       refreshNavOnly();
     };
   });
-  return wrap;
-}
 
-/* ===================== CONFIG TAB 3: Zeit ===================== */
-
-function buildConfigTab3(){
-  const wrap = document.createElement("div");
-  wrap.className = "panel";
-  wrap.innerHTML = `
+  const timePanel = document.createElement("div");
+  timePanel.className = "panel";
+  timePanel.innerHTML = `
     <h2>Zeit-Konfiguration</h2>
     <p class="hint">Wie lange hat der Verlierer Zeit, alles zu erledigen?</p>
     <div class="radio-row">
@@ -997,16 +1170,89 @@ function buildConfigTab3(){
       <div class="radio-opt ${S.config.timeMode==='fixed'?'active':''}" data-mode="fixed">Feste Zeit</div>
     </div>
     <div id="modeFields"></div>
+    <div class="time-bounds-section">
+      <div class="toggle-row">
+        <div>
+          <div style="font-weight:700;font-size:14px;">Minimale Zeit</div>
+          <div class="hint" style="margin:2px 0 0;">Endzeit fällt nie darunter, egal was gewürfelt/gedreht wird.</div>
+        </div>
+        <div class="toggle ${S.config.minTimeEnabled?'on':''}" id="minTimeToggle"><div class="knob"></div></div>
+      </div>
+      <div id="minTimeFields"></div>
+      <div class="toggle-row" style="margin-top:16px;">
+        <div>
+          <div style="font-weight:700;font-size:14px;">Maximale Zeit</div>
+          <div class="hint" style="margin:2px 0 0;">Endzeit steigt nie darüber, egal was gewürfelt/gedreht wird.</div>
+        </div>
+        <div class="toggle ${S.config.maxTimeEnabled?'on':''}" id="maxTimeToggle"><div class="knob"></div></div>
+      </div>
+      <div id="maxTimeFields"></div>
+      <p class="hint hidden" id="timeBoundsWarning" style="color:var(--red-bad);margin-top:10px;"></p>
+    </div>
   `;
-  wrap.querySelectorAll(".radio-opt").forEach(opt => {
+
+  function updateTimeBoundsWarning(){
+    const warn = timePanel.querySelector("#timeBoundsWarning");
+    if (S.config.minTimeEnabled && S.config.maxTimeEnabled && S.config.minTimeHours > S.config.maxTimeHours){
+      warn.textContent = "⚠️ Minimale Zeit liegt über der maximalen Zeit — die maximale Zeit gewinnt im Zweifel.";
+      warn.classList.remove("hidden");
+    } else {
+      warn.classList.add("hidden");
+    }
+  }
+
+  timePanel.querySelector("#minTimeToggle").onclick = () => {
+    S.config.minTimeEnabled = !S.config.minTimeEnabled;
+    timePanel.querySelector("#minTimeToggle").classList.toggle("on", S.config.minTimeEnabled);
+    renderMinTimeFields();
+    updateTimeBoundsWarning();
+    refreshNavOnly();
+  };
+  const minTimeFieldsEl = timePanel.querySelector("#minTimeFields");
+  function renderMinTimeFields(){
+    if (!S.config.minTimeEnabled){ minTimeFieldsEl.innerHTML = ""; return; }
+    minTimeFieldsEl.innerHTML = `
+      <label class="field-label" style="margin-top:10px;">Minimale Zeit (h)</label>
+      <input class="num-input" type="number" min="0" max="500" step="1" value="${S.config.minTimeHours}" id="minTimeHoursInput">
+    `;
+    minTimeFieldsEl.querySelector("#minTimeHoursInput").oninput = (e) => {
+      S.config.minTimeHours = parseFloat(e.target.value) || 0;
+      updateTimeBoundsWarning();
+    };
+  }
+  renderMinTimeFields();
+
+  timePanel.querySelector("#maxTimeToggle").onclick = () => {
+    S.config.maxTimeEnabled = !S.config.maxTimeEnabled;
+    timePanel.querySelector("#maxTimeToggle").classList.toggle("on", S.config.maxTimeEnabled);
+    renderMaxTimeFields();
+    updateTimeBoundsWarning();
+    refreshNavOnly();
+  };
+  const maxTimeFieldsEl = timePanel.querySelector("#maxTimeFields");
+  function renderMaxTimeFields(){
+    if (!S.config.maxTimeEnabled){ maxTimeFieldsEl.innerHTML = ""; return; }
+    maxTimeFieldsEl.innerHTML = `
+      <label class="field-label" style="margin-top:10px;">Maximale Zeit (h)</label>
+      <input class="num-input" type="number" min="1" max="500" step="1" value="${S.config.maxTimeHours}" id="maxTimeHoursInput">
+    `;
+    maxTimeFieldsEl.querySelector("#maxTimeHoursInput").oninput = (e) => {
+      S.config.maxTimeHours = parseFloat(e.target.value) || 1;
+      updateTimeBoundsWarning();
+    };
+  }
+  renderMaxTimeFields();
+  updateTimeBoundsWarning();
+
+  timePanel.querySelectorAll(".radio-opt").forEach(opt => {
     opt.onclick = () => {
       S.config.timeMode = opt.dataset.mode;
-      wrap.querySelectorAll(".radio-opt").forEach(o => o.classList.toggle("active", o===opt));
+      timePanel.querySelectorAll(".radio-opt").forEach(o => o.classList.toggle("active", o===opt));
       renderModeFields();
       refreshNavOnly();
     };
   });
-  const modeFields = wrap.querySelector("#modeFields");
+  const modeFields = timePanel.querySelector("#modeFields");
   function renderModeFields(){
     if (S.config.timeMode === "fixed"){
       modeFields.innerHTML = `
@@ -1043,14 +1289,18 @@ function buildConfigTab3(){
     }
   }
   renderModeFields();
+
+  wrap.appendChild(dicePanel);
+  wrap.appendChild(timePanel);
   return wrap;
 }
 
-/* ===================== CONFIG TAB 4: Glücksrad ===================== */
+/* ===================== CONFIG TAB 3: Glücksrad ===================== */
 
-const FIELD_TYPE_LABELS = { time_plus:"Zeit +", time_minus:"Zeit −", bonus:"Bonus", handicap:"Handicap" };
+const FIELD_TYPE_LABELS = { time_plus:"Zeit +", time_minus:"Zeit −", amount_plus:"+X auf Kategorie", amount_minus:"−X auf Kategorie", bonus:"Bonus", handicap:"Handicap" };
+const GOOD_FIELD_TYPES = ["time_plus","amount_minus","bonus"];
 
-function buildConfigTab4(){
+function buildConfigTab3(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
   wrap.innerHTML = `
@@ -1075,34 +1325,23 @@ function buildConfigTab4(){
   function renderWheelBody(){
     if (!S.config.wheelEnabled){ body.innerHTML = ""; return; }
     body.innerHTML = `
-      <div style="margin-top:14px;">
-        <label class="field-label">Mindestgesamtzeit (h) — darf nie unterschritten werden</label>
-        <input class="num-input" type="number" min="0" max="72" step="1" value="${S.config.minTotalHours}" id="minHoursInput" style="margin-bottom:14px;">
-      </div>
       <div id="fieldsList"></div>
       <div class="row-btns" style="margin-top:4px;">
         <button class="btn" id="addFieldBtn">+ Feld hinzufügen</button>
       </div>
     `;
-    body.querySelector("#minHoursInput").oninput = (e) => {
-      S.config.minTotalHours = parseFloat(e.target.value) || 0;
-    };
 
     const fieldsList = body.querySelector("#fieldsList");
     renderFieldsList(fieldsList);
 
     body.querySelector("#addFieldBtn").onclick = () => {
       if (S.config.wheelFields.length >= 10) return;
-      S.config.wheelFields.push({ id: uid(), type:"bonus", label:"", hours:2, weight:1 });
+      S.config.wheelFields.push({ id: uid(), type:"bonus", label:"", hours:2, amount:3, weight:1 });
       renderFieldsList(fieldsList);
       updateFieldButtons(body);
       refreshNavOnly();
     };
     updateFieldButtons(body);
-  }
-
-  function timeFieldLabel(f){
-    return (f.type==="time_plus" ? "+" : "−") + fmtHours(f.hours) + "h";
   }
 
   function renderFieldsList(container){
@@ -1113,38 +1352,52 @@ function buildConfigTab4(){
     }
     S.config.wheelFields.forEach(f => {
       const isTime = f.type==="time_plus" || f.type==="time_minus";
+      const isAmount = f.type==="amount_plus" || f.type==="amount_minus";
+      const isCustomWeight = (f.weight||1) !== 1;
       const row = document.createElement("div");
       row.className = "field-row";
       row.innerHTML = `
         <div class="field-row-top">
           <select class="type-select ${f.type}" data-role="type">
-            ${Object.keys(FIELD_TYPE_LABELS).map(t => `<option value="${t}" ${t===f.type?'selected':''} style="color:${(t==='time_plus'||t==='bonus')?'#3fae63':'#e0483f'};background:#181e2b;">${FIELD_TYPE_LABELS[t]}</option>`).join("")}
+            ${Object.keys(FIELD_TYPE_LABELS).map(t => `<option value="${t}" ${t===f.type?'selected':''} style="color:${GOOD_FIELD_TYPES.includes(t)?'#3fae63':'#e0483f'};background:#181e2b;">${FIELD_TYPE_LABELS[t]}</option>`).join("")}
           </select>
-          ${isTime ? `<span class="field-label-text field-label-display" data-role="timeLabelDisplay">${timeFieldLabel(f)}</span>`
-                   : `<input class="field-label-text" type="text" maxlength="60" placeholder="Beschreibung..." value="${esc(f.label)}" data-role="label">`}
+          ${isTime ? `<span class="field-unit-label">${f.type==="time_plus"?"+":"−"}</span>${stepperHTML("hours", f.hours, 1, 24)}<span class="field-unit-label">h</span>`
+                   : (isAmount ? ``
+                   : `<input class="field-label-text" type="text" maxlength="60" placeholder="Beschreibung..." value="${esc(f.label)}" data-role="label">`)}
           <button class="field-remove">✕</button>
         </div>
-        <div class="field-extra">
-          ${isTime ? `Stunden: <input class="field-mini-input" type="number" min="1" max="24" value="${f.hours}" data-role="hours">` : ``}
-          Gewichtung: <input class="field-mini-input" type="number" min="1" max="10" value="${f.weight}" data-role="weight">
+        ${isAmount ? `
+          <div class="field-extra" style="margin-top:8px;flex-direction:column;align-items:stretch;gap:6px;">
+            <span class="icon-override-label">Menge (${f.type==="amount_plus"?"+":"−"})</span>
+            ${chipRowHTML([1,3,5,10], f.amount||3, "")}
+          </div>
+          <div class="field-extra" style="margin-top:6px;">Beim Drehen fragt ein Popup, auf welche Kategorie es angewendet wird.</div>
+        ` : ``}
+        ${advancedToggleHTML("weight", "Erweitert: Gewichtung" + (isCustomWeight ? ` (${f.weight})` : ""), isCustomWeight)}
+        <div class="field-advanced ${isCustomWeight ? '' : 'hidden'}" data-role="weightAdvanced">
+          <span class="icon-override-label">Gewichtung (Wahrscheinlichkeit):</span>
+          ${stepperHTML("weight", f.weight||1, 1, 10)}
         </div>
       `;
       row.querySelector('[data-role="type"]').onchange = e => {
         f.type = e.target.value;
         const nowTime = f.type==="time_plus" || f.type==="time_minus";
+        const nowAmount = f.type==="amount_plus" || f.type==="amount_minus";
         if (nowTime && !f.hours) f.hours = 2;
+        if (nowAmount && !f.amount) f.amount = 3;
         renderFieldsList(container);
         refreshNavOnly();
       };
       const labelInput = row.querySelector('[data-role="label"]');
       if (labelInput) labelInput.oninput = e => { f.label = e.target.value; refreshNavOnly(); };
-      const hoursInput = row.querySelector('[data-role="hours"]');
-      if (hoursInput) hoursInput.oninput = e => {
-        f.hours = clamp(parseFloat(e.target.value)||1,1,24);
-        const disp = row.querySelector('[data-role="timeLabelDisplay"]');
-        if (disp) disp.textContent = timeFieldLabel(f);
-      };
-      row.querySelector('[data-role="weight"]').oninput = e => f.weight = clamp(parseInt(e.target.value)||1,1,10);
+      if (isTime){
+        wireStepper(row, "hours", 1, 24, () => f.hours, (v) => { f.hours = v; });
+      }
+      if (isAmount){
+        wireChipPicker(row, () => f.amount||3, (v) => { f.amount = v; });
+      }
+      wireAdvancedToggle(row, "weight");
+      wireStepper(row, "weight", 1, 10, () => f.weight||1, (v) => { f.weight = v; });
       row.querySelector(".field-remove").onclick = () => {
         S.config.wheelFields = S.config.wheelFields.filter(x => x.id !== f.id);
         renderFieldsList(container);
@@ -1188,33 +1441,8 @@ function buildGameTab1(){
   renderAssignList(wrap);
   updatePendingBadge(wrap);
 
-  wrap.querySelector("#rollBtn").onclick = () => {
-    if (diceRolling) return;
-    if (S.game.pendingRoll !== null) return; // must assign first
-    const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null);
-    if (remaining.length === 0) return;
-    diceRolling = true;
-    const die = wrap.querySelector("#dieEl");
-    die.classList.add("rolling");
-    const rollBtn = wrap.querySelector("#rollBtn");
-    rollBtn.disabled = true;
-    let ticks = 0;
-    const iv = setInterval(() => {
-      die.textContent = String(1 + Math.floor(Math.random()*S.config.diceType));
-      ticks++;
-      if (ticks > 7){
-        clearInterval(iv);
-        const final = 1 + Math.floor(Math.random()*S.config.diceType);
-        die.textContent = String(final);
-        die.classList.remove("rolling");
-        S.game.pendingRoll = final;
-        diceRolling = false;
-        renderAssignList(wrap);
-        updatePendingBadge(wrap);
-        rollBtn.disabled = true;
-      }
-    }, 70);
-  };
+  wrap.querySelector("#rollBtn").onclick = () => rollDice(wrap);
+  wrap.querySelector("#dieEl").onclick = () => rollDice(wrap);
 
   wrap.querySelector("#resetRollsBtn").onclick = () => {
     showConfirmModal("Alle gewürfelten Zahlen zurücksetzen? (Die Config bleibt erhalten)", () => {
@@ -1229,10 +1457,48 @@ function buildGameTab1(){
   return wrap;
 }
 
+function rollDice(wrap){
+  if (diceRolling) return;
+  if (S.game.pendingRoll !== null) return; // must assign first
+  const remaining = S.config.categories.filter(c => S.game.rolls[c.id] === null);
+  if (remaining.length === 0) return;
+  diceRolling = true;
+  const die = wrap.querySelector("#dieEl");
+  die.classList.add("rolling");
+  const rollBtn = wrap.querySelector("#rollBtn");
+  rollBtn.disabled = true;
+  let ticks = 0;
+  const iv = setInterval(() => {
+    die.textContent = String(1 + Math.floor(Math.random()*S.config.diceType));
+    ticks++;
+    if (ticks > 7){
+      clearInterval(iv);
+      const final = 1 + Math.floor(Math.random()*S.config.diceType);
+      die.textContent = String(final);
+      die.classList.remove("rolling");
+      S.game.pendingRoll = final;
+      diceRolling = false;
+      renderAssignList(wrap);
+      updatePendingBadge(wrap);
+      rollBtn.disabled = true;
+    }
+  }, 70);
+}
+
 function catAmount(cat){
   const roll = S.game.rolls[cat.id];
   if (roll === null || roll === undefined) return null;
-  return roll * (cat.multiplier || 1);
+  const base = roll * (cat.multiplier || 1);
+  const delta = (S.game.amountAdjustments && S.game.amountAdjustments[cat.id]) || 0;
+  return Math.max(1, base + delta);
+}
+
+function catAmountBreakdown(cat){
+  const roll = S.game.rolls[cat.id];
+  const base = roll * (cat.multiplier || 1);
+  const delta = (S.game.amountAdjustments && S.game.amountAdjustments[cat.id]) || 0;
+  const final = Math.max(1, base + delta);
+  return { base, delta, final };
 }
 
 function renderAssignList(wrap){
@@ -1285,6 +1551,8 @@ function computeBaseHours(){
     const sum = S.config.categories.reduce((acc,c) => acc + (S.game.rolls[c.id]||0), 0);
     base = sum * getDynamicFactor();
   }
+  if (S.config.minTimeEnabled) base = Math.max(base, S.config.minTimeHours);
+  if (S.config.maxTimeEnabled) base = Math.min(base, S.config.maxTimeHours);
   S.game.baseHours = base;
   S.game.totalHours = base;
 }
@@ -1297,17 +1565,18 @@ function buildGameTab2(){
     wrap.innerHTML = `
       <h2>Zeit</h2>
       <div class="time-hero">
-        <div class="big-num">${fmtHours(S.game.baseHours)}h</div>
+        <div class="big-num reveal-num" id="fixedTotal">${fmtHours(S.game.baseHours)}h</div>
         <div class="unit">Stunden Zeit (feste Zeit)</div>
       </div>
     `;
+    setTimeout(() => revealFinalNumber(wrap.querySelector("#fixedTotal")), 100);
   } else {
     wrap.innerHTML = `
       <h2>Zeit</h2>
       <p class="hint">Summe der gewürfelten Zahlen × Faktor ${getDynamicFactor()} (${FACTOR_PRESETS[S.config.dynamicFactorIndex].name}).</p>
       <div class="sum-visual" id="sumVisual"></div>
       <div class="time-hero">
-        <div class="big-num" id="sumTotal">0h</div>
+        <div class="big-num reveal-num" id="sumTotal">${fmtHours(S.game.baseHours)}h</div>
         <div class="unit">Stunden Zeit (Basis)</div>
       </div>
     `;
@@ -1330,7 +1599,7 @@ function buildGameTab2(){
         setTimeout(() => c.classList.add("show"), i*120);
       });
       setTimeout(() => {
-        revealFinalNumber(wrap.querySelector("#sumTotal"), fmtHours(S.game.baseHours) + "h");
+        revealFinalNumber(wrap.querySelector("#sumTotal"));
       }, rolls.length*120 + 200);
     }, 50);
   }
@@ -1338,7 +1607,7 @@ function buildGameTab2(){
 }
 
 function revealFinalNumber(el, text){
-  el.textContent = text;
+  if (typeof text === "string") el.textContent = text;
   el.classList.add("reveal-num");
   requestAnimationFrame(() => {
     requestAnimationFrame(() => el.classList.add("show"));
@@ -1400,6 +1669,7 @@ function buildGameTab3(){
   updateSpinButton(wrap);
 
   wrap.querySelector("#spinBtn").onclick = () => spinWheel(wrap);
+  wrap.querySelector(".wheel-wrap").onclick = () => spinWheel(wrap);
 
   return wrap;
 }
@@ -1413,12 +1683,16 @@ function updateSpinButton(wrap){
 function fieldDisplayLabel(f){
   if (f.type === "time_plus") return `Zeit + ${f.hours}h`;
   if (f.type === "time_minus") return `Zeit − ${f.hours}h`;
+  if (f.type === "amount_plus") return `+${f.amount} auf Kategorie`;
+  if (f.type === "amount_minus") return `−${f.amount} auf Kategorie`;
   return f.label || (f.type==="bonus"?"Bonus":"Handicap");
 }
 
 const WHEEL_COLORS = {
   time_plus: "#3fae63",
   time_minus: "#e0483f",
+  amount_plus: "#e0483f",
+  amount_minus: "#3fae63",
   bonus: "#2f8f4e",
   handicap: "#b8342c",
 };
@@ -1427,8 +1701,7 @@ function renderWheelSVG(wrap){
   const holder = wrap.querySelector("#wheelSvgHolder");
   const pool = S.game.wheelPool;
   if (pool.length === 0){
-    holder.innerHTML = `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="96" fill="#181e2b" stroke="#262d3d" stroke-width="2"/>
-      <text x="100" y="105" text-anchor="middle" fill="#8892a3" font-size="13">Rad leer</text></svg>`;
+    holder.innerHTML = `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="96" fill="#181e2b" stroke="#262d3d" stroke-width="2"/></svg>`;
     return;
   }
   const totalWeight = pool.reduce((a,f) => a+f.weight, 0);
@@ -1501,32 +1774,85 @@ function spinWheel(wrap){
 
   const onDone = () => {
     rotor.removeEventListener("transitionend", onDone);
-    applyWheelResult(winner);
     S.game.wheelPool = S.game.wheelPool.filter(f => f.id !== winner.id);
     S.game.hasSpunOnce = true;
     // snap back instantly for next spin
     rotor.style.transition = "none";
     S.game.wheelRotationBase = 0;
     wheelSpinning = false;
-    renderTabContent();
-    renderBottomNav();
-    renderStepNav();
+
+    const finishSpin = () => {
+      renderTabContent();
+      renderBottomNav();
+      renderStepNav();
+    };
+
+    if (winner.type === "amount_plus" || winner.type === "amount_minus"){
+      showCategoryPickerModal(winner, (categoryId) => {
+        applyAmountResult(winner, categoryId);
+        finishSpin();
+      });
+    } else {
+      applyWheelResult(winner);
+      finishSpin();
+    }
   };
   rotor.addEventListener("transitionend", onDone);
 }
 
+function showCategoryPickerModal(field, onPick){
+  const root = document.getElementById("modalRoot");
+  const isPlus = field.type === "amount_plus";
+  const headline = (isPlus ? "+" : "−") + field.amount;
+  const rows = S.config.categories.map(c => `
+    <button class="cat-pick-row" data-id="${c.id}">
+      <span class="cat-pick-icon">${catIcon(c)}</span>
+      <span class="cat-pick-name">${esc(c.text)}</span>
+      <span class="cat-pick-val">${catAmount(c)}</span>
+    </button>
+  `).join("");
+  root.innerHTML = `
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box modal-box-small">
+        <h2 style="margin-bottom:12px;">${esc(headline)}</h2>
+        <div class="cat-pick-list">${rows}</div>
+      </div>
+    </div>
+  `;
+  root.querySelectorAll(".cat-pick-row").forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      root.innerHTML = "";
+      onPick(id);
+    };
+  });
+}
+
+function applyAmountResult(field, categoryId){
+  const cat = S.config.categories.find(c => c.id === categoryId);
+  const delta = field.type === "amount_plus" ? field.amount : -field.amount;
+  if (!S.game.amountAdjustments) S.game.amountAdjustments = {};
+  S.game.amountAdjustments[categoryId] = (S.game.amountAdjustments[categoryId] || 0) + delta;
+  const sign = field.type === "amount_plus" ? "+" : "−";
+  const label = `${sign}${field.amount} → ${cat ? catIcon(cat) : ""} ${cat ? cat.text : ""}`.trim();
+  S.game.wheelResults.push({ type: field.type, label, amt: `${sign}${field.amount}` });
+}
+
 function applyWheelResult(field){
   const label = fieldDisplayLabel(field);
+  let amt = "";
   if (field.type === "time_plus" || field.type === "time_minus"){
     const delta = field.type === "time_plus" ? field.hours : -field.hours;
     const before = S.game.totalHours;
     let after = before + delta;
-    let clamped = false;
-    if (after < S.config.minTotalHours){ after = S.config.minTotalHours; clamped = true; }
+    let clampReason = null;
+    if (S.config.minTimeEnabled && after < S.config.minTimeHours){ after = S.config.minTimeHours; clampReason = "min"; }
+    if (S.config.maxTimeEnabled && after > S.config.maxTimeHours){ after = S.config.maxTimeHours; clampReason = "max"; }
     S.game.totalHours = after;
-    S.game.timeLog.push({ label, delta: after-before, clamped });
+    S.game.timeLog.push({ label, delta: after-before, clampReason });
+    amt = `${field.type==="time_plus"?"+":"−"}${fmtHours(field.hours)}h`;
   }
-  S.game.wheelResults.push({ type: field.type, label });
+  S.game.wheelResults.push({ type: field.type, label, amt });
 }
 
 function renderResultList(wrap){
@@ -1536,10 +1862,7 @@ function renderResultList(wrap){
   S.game.wheelResults.forEach(r => {
     const row = document.createElement("div");
     row.className = `result-row ${r.type}`;
-    let amt = "";
-    if (r.type === "time_plus" || r.type === "time_minus") {
-      amt = `<span class="amt">${r.type==="time_plus"?"+":"−"}${r.label.replace(/[^0-9.]/g,"")}h</span>`;
-    }
+    const amt = r.amt ? `<span class="amt">${r.amt}</span>` : "";
     row.innerHTML = `<span>${esc(r.label)}</span>${amt}`;
     list.appendChild(row);
   });
@@ -1551,9 +1874,19 @@ function buildGameTab4(){
   const wrap = document.createElement("div");
   wrap.className = "panel";
 
-  const catRows = S.config.categories.map(c => `
-    <div class="summary-cat-row"><span>${catIcon(c)} ${esc(c.text)}</span><strong>${catAmount(c)}</strong></div>
-  `).join("");
+  const catRows = S.config.categories.map(c => {
+    const { base, delta, final } = catAmountBreakdown(c);
+    let valueHtml;
+    if (delta !== 0){
+      const deltaGood = delta < 0; // fewer reps = good, more reps = bad
+      const deltaClass = deltaGood ? "amt-good" : "amt-bad";
+      const deltaSign = delta > 0 ? "+" : "−";
+      valueHtml = `${base} <span class="${deltaClass}">${deltaSign}${Math.abs(delta)}</span> = <strong>${final}</strong>`;
+    } else {
+      valueHtml = `<strong>${final}</strong>`;
+    }
+    return `<div class="summary-cat-row"><span>${catIcon(c)} ${esc(c.text)}</span><span class="summary-cat-value">${valueHtml}</span></div>`;
+  }).join("");
 
   let derivation = "";
   if (S.config.timeMode === "fixed"){
@@ -1563,19 +1896,21 @@ function buildGameTab4(){
     derivation = `Basis: (${rolls.join(" + ")}) × ${getDynamicFactor()} = <strong>${fmtHours(S.game.baseHours)}h</strong>`;
   }
   S.game.timeLog.forEach(t => {
-    derivation += `<br>${t.delta>=0?'+':''}${fmtHours(t.delta)}h (${esc(t.label)})${t.clamped?' — Minimum erreicht':''}`;
+    const deltaClass = t.delta >= 0 ? "amt-good" : "amt-bad";
+    const sign = t.delta >= 0 ? "+" : "−";
+    derivation += `<br><span class="${deltaClass}">${sign}${fmtHours(Math.abs(t.delta))}h</span> (${esc(t.label)})${t.clampReason==='min'?' — Minimum erreicht':(t.clampReason==='max'?' — Maximum erreicht':'')}`;
   });
   derivation += `<br><span class="final">= Endzeit: ${fmtHours(S.game.totalHours)}h</span>`;
 
-  const bonusHandicapRows = S.game.wheelResults.filter(r => r.type==="bonus"||r.type==="handicap").map(r => `
-    <div class="result-row ${r.type}"><span>${esc(r.label)}</span></div>
+  const bonusHandicapRows = S.game.wheelResults.filter(r => r.type==="bonus"||r.type==="handicap"||r.type==="amount_plus"||r.type==="amount_minus"||r.type==="time_plus"||r.type==="time_minus").map(r => `
+    <div class="result-row ${r.type}"><span>${esc(r.label)}</span>${r.amt ? `<span class="amt">${esc(r.amt)}</span>` : ""}</div>
   `).join("");
 
   wrap.innerHTML = `
     <h2>Zusammenfassung</h2>
     <div id="summaryCapture" class="capture-pad">
       <div class="final-hero">
-        <div class="big-num">${formatDuration(S.game.totalHours)}</div>
+        <div class="big-num reveal-num" id="finalBigNum">${formatDuration(S.game.totalHours)}</div>
         <div class="unit">Zeit für den Verlierer</div>
       </div>
       <div class="summary-block">
@@ -1605,6 +1940,8 @@ function buildGameTab4(){
     }, { danger:true, confirmText:"Neu starten" });
   };
 
+  setTimeout(() => revealFinalNumber(wrap.querySelector("#finalBigNum")), 150);
+
   if (!S.game.confettiFired){
     S.game.confettiFired = true;
     setTimeout(() => fireDoomEffect(wrap), 150);
@@ -1628,6 +1965,15 @@ function exportSummaryAsPng(captureEl, btnEl){
   const originalLabel = btnEl ? btnEl.textContent : "";
   if (btnEl){ btnEl.disabled = true; btnEl.textContent = "Bild wird erstellt…"; }
   const resetBtn = () => { if (btnEl){ btnEl.disabled = false; btnEl.textContent = originalLabel; } };
+
+  // make sure any still-animating "reveal" numbers are fully visible in the export,
+  // bypassing the transition entirely so timing can't leave it mid-fade/blur
+  captureEl.querySelectorAll(".reveal-num").forEach(el => {
+    el.style.transition = "none";
+    el.style.opacity = "1";
+    el.style.filter = "none";
+    el.style.transform = "none";
+  });
 
   loadHtml2Canvas(() => {
     const rect = captureEl.getBoundingClientRect();
@@ -1749,6 +2095,22 @@ function fireDoomEffect(panelEl){
     }
   }
   loop();
+}
+
+/* ===================== TOAST ===================== */
+
+let toastTimer = null;
+function showToast(message){
+  if (!message) return;
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.remove("hidden");
+  requestAnimationFrame(() => el.classList.add("show"));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.classList.remove("show");
+    setTimeout(() => el.classList.add("hidden"), 250);
+  }, 2600);
 }
 
 /* ===================== GENERIC CONFIRM / ALERT MODAL ===================== */
