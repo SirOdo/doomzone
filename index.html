@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DOOMZONE 😈🏈</title>
 <meta name="description" content="DOOMZONE – würfel die Strafaufgaben für den Fantasy-Football-Verlierer aus, dreh am Glücksrad und lass das Schicksal entscheiden.">
 <meta property="og:title" content="DOOMZONE 😈🏈">
@@ -44,7 +44,7 @@
     font-family:var(--font);
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
-    padding-bottom:96px;
+    padding-bottom:calc(96px + env(safe-area-inset-bottom));
   }
   button{font-family:inherit;cursor:pointer;}
   input, select{font-family:inherit;}
@@ -76,11 +76,6 @@
     width:120px;height:10px;margin:14px auto 0;opacity:.55;
   }
 
-  .reload-note{
-    text-align:center;font-size:11.5px;color:var(--muted-2);
-    margin-top:10px;padding:0 20px;
-  }
-
   .dedication{
     text-align:center;font-size:10.5px;color:var(--muted-2);
     opacity:.5;margin:40px 0 12px;font-style:italic;letter-spacing:0.01em;
@@ -109,13 +104,14 @@
   .stepnav-row{display:flex;align-items:center;}
   .step-chip-wrap{display:flex;flex-direction:column;align-items:center;flex:none;position:relative;}
   .step-chip{
-    width:38px;height:38px;border-radius:50%;
+    width:38px;height:38px;border-radius:50%;padding:0;font-family:inherit;
     border:2px solid var(--border);background:var(--panel);
     color:var(--muted);font-weight:800;font-size:14px;
     display:flex;align-items:center;justify-content:center;
     transition:background .15s,border-color .15s,color .15s;
   }
   .step-chip.reachable{cursor:pointer;}
+  .step-chip:disabled{opacity:1;cursor:default;}
   .step-chip.done{background:var(--crimson-dim);border-color:var(--crimson);color:#fff;}
   .step-chip.current{background:var(--crimson);border-color:var(--crimson-glow);color:#fff;box-shadow:0 0 0 3px rgba(200,32,60,.22);}
   .step-label{font-size:10.5px;color:var(--muted-2);margin-top:5px;max-width:64px;text-align:center;line-height:1.2;}
@@ -224,13 +220,14 @@
   .radio-opt{
     flex:1;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel-2);
     padding:12px;text-align:center;font-size:13.5px;font-weight:600;color:var(--muted);
+    font-family:inherit;cursor:pointer;
   }
   .radio-opt.active{border-color:var(--crimson);background:var(--crimson-dim);color:#fff;}
 
   .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
   .toggle{
     width:44px;height:26px;border-radius:14px;background:var(--border);position:relative;flex:none;
-    border:1px solid var(--border);
+    border:1px solid var(--border);padding:0;cursor:pointer;
   }
   .toggle.on{background:var(--crimson-dim);border-color:var(--crimson);}
   .toggle .knob{
@@ -304,7 +301,7 @@
   .bottomnav{
     position:fixed;left:0;right:0;bottom:0;
     background:linear-gradient(180deg, rgba(10,13,19,0) 0%, rgba(10,13,19,.97) 30%);
-    padding:18px 16px 16px;
+    padding:18px 16px calc(16px + env(safe-area-inset-bottom));
     display:flex;justify-content:center;
   }
   .bottomnav-inner{
@@ -317,7 +314,7 @@
   .btn.soft-disabled{opacity:.4;}
 
   .toast{
-    position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(8px);
+    position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(8px);
     max-width:calc(480px - 32px);width:calc(100% - 32px);
     background:var(--crimson-dim);border:1px solid var(--crimson);color:#fff;
     font-size:13px;font-weight:600;text-align:center;
@@ -374,6 +371,7 @@
   .time-hero{text-align:center;padding:26px 0 8px;}
   .time-hero .big-num{font-size:56px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
   .time-hero .unit{font-size:15px;color:var(--muted);margin-top:2px;}
+  .clamp-note{font-size:13px;color:var(--gold);font-weight:700;margin-top:8px;}
   .sum-visual{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:14px 0;}
   .sum-chip{
     background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius);
@@ -512,7 +510,6 @@
       <line x1="95" y1="1" x2="95" y2="9"/><line x1="110" y1="1" x2="110" y2="9"/>
       <line x1="0" y1="5" x2="120" y2="5" stroke-width="1"/>
     </g></svg>
-    <div class="reload-note">⚠️ Beim Neuladen der Seite gehen alle Eingaben verloren — nichts wird gespeichert.</div>
   </header>
 
   <div class="topbar-actions" id="topbarActions"></div>
@@ -579,10 +576,11 @@ function clamp(v,min,max){ return Math.min(max, Math.max(min, v)); }
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 /* Reusable "chip presets + custom value" picker, e.g. Multiplikator, Menge */
-function chipRowHTML(presetValues, currentVal, suffix){
-  return `<div class="chip-row">
-    ${presetValues.map(v => `<button type="button" class="chip-btn ${v===currentVal?'active':''}" data-val="${v}">${v}${suffix||''}</button>`).join("")}
-    <input class="chip-custom-input" type="number" min="1" max="1000" step="1" value="${currentVal}" placeholder="eigener Wert">
+function chipRowHTML(presetValues, currentVal, suffix, label){
+  const a11yLabel = label ? esc(label) + ": eigener Wert" : "Eigener Wert";
+  return `<div class="chip-row" role="group" ${label?`aria-label="${esc(label)}"`:''}>
+    ${presetValues.map(v => `<button type="button" class="chip-btn ${v===currentVal?'active':''}" data-val="${v}" aria-pressed="${v===currentVal}">${v}${suffix||''}</button>`).join("")}
+    <input class="chip-custom-input" type="number" min="1" max="1000" step="1" value="${currentVal}" placeholder="eigener Wert" aria-label="${a11yLabel}">
   </div>`;
 }
 function wireChipPicker(container, getVal, setVal){
@@ -591,36 +589,59 @@ function wireChipPicker(container, getVal, setVal){
   chips.forEach(c => {
     c.onclick = () => {
       setVal(parseInt(c.dataset.val, 10));
-      chips.forEach(x => x.classList.toggle("active", x===c));
+      chips.forEach(x => {
+        x.classList.toggle("active", x===c);
+        x.setAttribute("aria-pressed", String(x===c));
+      });
       customInput.value = getVal();
     };
   });
   customInput.oninput = () => {
     setVal(clamp(parseInt(customInput.value, 10) || 1, 1, 1000));
-    chips.forEach(c => c.classList.toggle("active", parseInt(c.dataset.val, 10)===getVal()));
+    chips.forEach(c => {
+      const isMatch = parseInt(c.dataset.val, 10)===getVal();
+      c.classList.toggle("active", isMatch);
+      c.setAttribute("aria-pressed", String(isMatch));
+    });
   };
 }
 
 /* Reusable collapsible "Erweitert" disclosure */
 function advancedToggleHTML(role, label, expanded){
-  return `<button type="button" class="advanced-toggle" data-role="${role}Toggle"><span class="advanced-arrow">${expanded?'▾':'▸'}</span> ${esc(label)}</button>`;
+  return `<button type="button" class="advanced-toggle" data-role="${role}Toggle" aria-expanded="${expanded}"><span class="advanced-arrow">${expanded?'▾':'▸'}</span> ${esc(label)}</button>`;
 }
-function wireAdvancedToggle(scopeEl, role){
+function wireAdvancedToggle(scopeEl, role, groupContainer){
   const btn = scopeEl.querySelector(`[data-role="${role}Toggle"]`);
   const panel = scopeEl.querySelector(`[data-role="${role}Advanced"]`);
   if (!btn || !panel) return;
   btn.onclick = () => {
-    const nowHidden = panel.classList.toggle("hidden");
-    btn.querySelector(".advanced-arrow").textContent = nowHidden ? "▸" : "▾";
+    const willOpen = panel.classList.contains("hidden");
+    if (willOpen && groupContainer){
+      // accordion: collapse every other open "Erweitert" panel in the same list first
+      groupContainer.querySelectorAll(".field-advanced").forEach(otherPanel => {
+        if (otherPanel === panel || otherPanel.classList.contains("hidden")) return;
+        otherPanel.classList.add("hidden");
+        const otherBtn = otherPanel.parentElement && otherPanel.parentElement.querySelector(".advanced-toggle");
+        if (otherBtn){
+          const arrow = otherBtn.querySelector(".advanced-arrow");
+          if (arrow) arrow.textContent = "▸";
+          otherBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+    }
+    panel.classList.toggle("hidden", !willOpen);
+    btn.querySelector(".advanced-arrow").textContent = willOpen ? "▾" : "▸";
+    btn.setAttribute("aria-expanded", String(willOpen));
   };
 }
 
 /* Reusable +/- stepper (e.g. Gewichtung, Stunden) */
-function stepperHTML(role, value, min, max){
+function stepperHTML(role, value, min, max, label){
+  const l = label || role;
   return `<div class="stepper" data-role="${role}Stepper">
-    <button type="button" class="stepper-btn" data-role="${role}Dec">−</button>
-    <span class="stepper-val" data-role="${role}Val">${value}</span>
-    <button type="button" class="stepper-btn" data-role="${role}Inc">+</button>
+    <button type="button" class="stepper-btn" data-role="${role}Dec" aria-label="${esc(l)} verringern">−</button>
+    <span class="stepper-val" data-role="${role}Val" aria-live="polite" aria-label="${esc(l)}: ${value}">${value}</span>
+    <button type="button" class="stepper-btn" data-role="${role}Inc" aria-label="${esc(l)} erhöhen">+</button>
   </div>`;
 }
 function wireStepper(scopeEl, role, min, max, getVal, setVal, onChange){
@@ -628,8 +649,9 @@ function wireStepper(scopeEl, role, min, max, getVal, setVal, onChange){
   const inc = scopeEl.querySelector(`[data-role="${role}Inc"]`);
   const val = scopeEl.querySelector(`[data-role="${role}Val"]`);
   if (!dec || !inc || !val) return;
-  dec.onclick = () => { setVal(clamp(getVal()-1, min, max)); val.textContent = getVal(); if (onChange) onChange(); };
-  inc.onclick = () => { setVal(clamp(getVal()+1, min, max)); val.textContent = getVal(); if (onChange) onChange(); };
+  const updateVal = () => { val.textContent = getVal(); val.setAttribute("aria-label", val.getAttribute("aria-label").replace(/:.*$/, ": " + getVal())); };
+  dec.onclick = () => { setVal(clamp(getVal()-1, min, max)); updateVal(); if (onChange) onChange(); };
+  inc.onclick = () => { setVal(clamp(getVal()+1, min, max)); updateVal(); if (onChange) onChange(); };
 }
 
 const FALLBACK_EMOJI = "🎯";
@@ -793,6 +815,54 @@ const S = {
   maxReachedGameTab: 1,
 };
 
+/* ===================== SESSION PERSISTENCE (per-tab only) ===================== */
+// Deliberately sessionStorage, not localStorage: survives a reload but clears
+// automatically when the tab is closed, so nothing lingers on a shared device
+// beyond the current session. (Live/cross-device sharing is a separate,
+// future project — needs a real backend, tracked separately.)
+
+const SESSION_STORAGE_KEY = "doomzone_state_v1";
+
+function saveStateToSession(){
+  try {
+    const snapshot = {
+      config: S.config,
+      page: S.page,
+      configTab: S.configTab,
+      maxReachedConfigTab: S.maxReachedConfigTab,
+      game: S.game,
+      gameTab: S.gameTab,
+      maxReachedGameTab: S.maxReachedGameTab,
+    };
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(snapshot));
+  } catch (e) {
+    // storage full/unavailable (e.g. private browsing) — app still works, just without persistence
+  }
+}
+
+function loadStateFromSession(){
+  try {
+    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.config || !Array.isArray(parsed.config.categories)) return false;
+    S.config = parsed.config;
+    S.page = parsed.page === "game" ? "game" : "config";
+    S.configTab = parsed.configTab || 1;
+    S.maxReachedConfigTab = parsed.maxReachedConfigTab || 1;
+    S.game = parsed.game || null;
+    S.gameTab = parsed.gameTab || 1;
+    S.maxReachedGameTab = parsed.maxReachedGameTab || 1;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function clearSessionState(){
+  try { sessionStorage.removeItem(SESSION_STORAGE_KEY); } catch (e) {}
+}
+
 function freshGame(){
   const rolls = {};
   S.config.categories.forEach(c => rolls[c.id] = null);
@@ -801,8 +871,6 @@ function freshGame(){
     pendingRoll: null,
     rollsMade: 0,
     baseHours: null,
-    rawBaseHours: null,
-    baseClampReason: null,
     totalHours: null,
     timeLog: [],
     wheelPool: buildWheelPool(),
@@ -901,6 +969,7 @@ function render(){
   renderStepNav();
   renderTabContent();
   renderBottomNav();
+  saveStateToSession();
 }
 
 function renderTopbar(){
@@ -925,6 +994,7 @@ function renderTopbar(){
       S.configTab = 1; S.maxReachedConfigTab = 1;
       S.game = null; S.gameTab = 1; S.maxReachedGameTab = 1;
       S.page = "config";
+      clearSessionState();
       render();
     }, { danger:true, confirmText:"Reset All" });
   };
@@ -940,7 +1010,7 @@ function renderStepNav(){
   const current = S.page === "config" ? S.configTab : S.gameTab;
   const maxReached = S.page === "config" ? S.maxReachedConfigTab : S.maxReachedGameTab;
 
-  let html = '<div class="stepnav-row">';
+  let html = '<div class="stepnav-row" role="tablist" aria-label="Fortschritt">';
   labels.forEach((label, i) => {
     const n = i+1;
     const reachable = n <= maxReached;
@@ -949,7 +1019,9 @@ function renderStepNav(){
     if (n === current) cls += " current";
     if (reachable) cls += " reachable";
     html += `<div class="step-chip-wrap ${n===current?'current':''}">
-      <div class="${cls}" data-step="${n}" ${reachable?'':'aria-disabled="true"'}>${n < current ? '✓' : n}</div>
+      <button type="button" class="${cls}" data-step="${n}" role="tab"
+        aria-label="Schritt ${n}: ${esc(label)}" aria-selected="${n===current}"
+        ${n===current?'aria-current="step"':''} ${reachable?'':'disabled'}>${n < current ? '✓' : n}</button>
       <div class="step-label">${label}</div>
     </div>`;
     if (i < labels.length-1){
@@ -1078,20 +1150,20 @@ function renderCatList(list){
     const isCustomMult = (cat.multiplier||1) !== 1;
     card.innerHTML = `
       <div class="cat-card-row">
-        <input class="cat-icon-input" type="text" maxlength="10" value="${esc(catIcon(cat))}" title="Emoji antippen zum Ändern">
-        <input class="cat-text-input" type="text" maxlength="40" placeholder="z. B. Liegestütze" value="${esc(cat.text)}">
-        <button class="cat-remove" title="Entfernen">✕</button>
+        <input class="cat-icon-input" type="text" maxlength="10" value="${esc(catIcon(cat))}" title="Emoji antippen zum Ändern" aria-label="Emoji für diese Aufgabe">
+        <input class="cat-text-input" type="text" maxlength="40" placeholder="z. B. Liegestütze" value="${esc(cat.text)}" aria-label="Aufgabenbeschreibung">
+        <button class="cat-remove" title="Entfernen" aria-label="Aufgabe entfernen">✕</button>
       </div>
       ${advancedToggleHTML("mult", "Erweitert: Multiplikator" + (isCustomMult ? ` (${cat.multiplier}×)` : ""), isCustomMult)}
       <div class="field-advanced ${isCustomMult ? '' : 'hidden'}" data-role="multAdvanced">
         <span class="icon-override-label">Multiplikator (× Würfelzahl):</span>
-        ${chipRowHTML([1,10,50,100], cat.multiplier||1, "×")}
+        ${chipRowHTML([1,10,50,100], cat.multiplier||1, "×", "Multiplikator")}
       </div>
       <div class="cat-error hidden"></div>
     `;
     const input = card.querySelector(".cat-text-input");
     const iconInput = card.querySelector(".cat-icon-input");
-    wireAdvancedToggle(card, "mult");
+    wireAdvancedToggle(card, "mult", list);
     wireChipPicker(card.querySelector('[data-role="multAdvanced"]'), () => cat.multiplier||1, (v) => { cat.multiplier = v; });
     input.oninput = () => {
       cat.text = input.value;
@@ -1157,17 +1229,20 @@ function buildConfigTab2(){
   dicePanel.innerHTML = `
     <h2>Würfeltyp</h2>
     <p class="hint">Dieser Würfel wird für alle Kategorien verwendet. Bitte auswählen, um fortzufahren.</p>
-    <div class="choice-grid">
+    <div class="choice-grid" role="radiogroup" aria-label="Würfeltyp">
       ${DICE_OPTIONS.map(d => `<div class="choice-btn-wrap">
           ${d===RECOMMENDED_DICE ? '<span class="rec-badge">no risk, no fun</span>' : ''}
-          <button class="choice-btn ${d===S.config.diceType?'active':''}" data-d="${d}">${DICE_EMOJI[d]} D${d}</button>
+          <button type="button" class="choice-btn ${d===S.config.diceType?'active':''}" role="radio" aria-checked="${d===S.config.diceType}" data-d="${d}">${DICE_EMOJI[d]} D${d}</button>
         </div>`).join("")}
     </div>
   `;
   dicePanel.querySelectorAll(".choice-btn").forEach(btn => {
     btn.onclick = () => {
       S.config.diceType = parseInt(btn.dataset.d, 10);
-      dicePanel.querySelectorAll(".choice-btn").forEach(b => b.classList.toggle("active", b===btn));
+      dicePanel.querySelectorAll(".choice-btn").forEach(b => {
+        b.classList.toggle("active", b===btn);
+        b.setAttribute("aria-checked", String(b===btn));
+      });
       refreshNavOnly();
     };
   });
@@ -1177,26 +1252,26 @@ function buildConfigTab2(){
   timePanel.innerHTML = `
     <h2>Zeit-Konfiguration</h2>
     <p class="hint">Wie lange hat der Verlierer Zeit, alles zu erledigen?</p>
-    <div class="radio-row">
-      <div class="radio-opt ${S.config.timeMode==='dynamic'?'active':''}" data-mode="dynamic">Dynamische Zeit</div>
-      <div class="radio-opt ${S.config.timeMode==='fixed'?'active':''}" data-mode="fixed">Feste Zeit</div>
+    <div class="radio-row" role="radiogroup" aria-label="Zeitmodus">
+      <button type="button" class="radio-opt ${S.config.timeMode==='dynamic'?'active':''}" role="radio" aria-checked="${S.config.timeMode==='dynamic'}" data-mode="dynamic">Dynamische Zeit</button>
+      <button type="button" class="radio-opt ${S.config.timeMode==='fixed'?'active':''}" role="radio" aria-checked="${S.config.timeMode==='fixed'}" data-mode="fixed">Feste Zeit</button>
     </div>
     <div id="modeFields"></div>
     <div class="time-bounds-section">
       <div class="toggle-row">
         <div>
-          <div style="font-weight:700;font-size:14px;">Minimale Zeit</div>
+          <div style="font-weight:700;font-size:14px;" id="minTimeLabel">Minimale Zeit</div>
           <div class="hint" style="margin:2px 0 0;">Endzeit fällt nie darunter, egal was gewürfelt/gedreht wird.</div>
         </div>
-        <div class="toggle ${S.config.minTimeEnabled?'on':''}" id="minTimeToggle"><div class="knob"></div></div>
+        <button type="button" class="toggle ${S.config.minTimeEnabled?'on':''}" id="minTimeToggle" role="switch" aria-checked="${S.config.minTimeEnabled}" aria-labelledby="minTimeLabel"><span class="knob"></span></button>
       </div>
       <div id="minTimeFields"></div>
       <div class="toggle-row" style="margin-top:16px;">
         <div>
-          <div style="font-weight:700;font-size:14px;">Maximale Zeit</div>
+          <div style="font-weight:700;font-size:14px;" id="maxTimeLabel">Maximale Zeit</div>
           <div class="hint" style="margin:2px 0 0;">Endzeit steigt nie darüber, egal was gewürfelt/gedreht wird.</div>
         </div>
-        <div class="toggle ${S.config.maxTimeEnabled?'on':''}" id="maxTimeToggle"><div class="knob"></div></div>
+        <button type="button" class="toggle ${S.config.maxTimeEnabled?'on':''}" id="maxTimeToggle" role="switch" aria-checked="${S.config.maxTimeEnabled}" aria-labelledby="maxTimeLabel"><span class="knob"></span></button>
       </div>
       <div id="maxTimeFields"></div>
       <p class="hint hidden" id="timeBoundsWarning" style="color:var(--red-bad);margin-top:10px;"></p>
@@ -1215,7 +1290,9 @@ function buildConfigTab2(){
 
   timePanel.querySelector("#minTimeToggle").onclick = () => {
     S.config.minTimeEnabled = !S.config.minTimeEnabled;
-    timePanel.querySelector("#minTimeToggle").classList.toggle("on", S.config.minTimeEnabled);
+    const btn = timePanel.querySelector("#minTimeToggle");
+    btn.classList.toggle("on", S.config.minTimeEnabled);
+    btn.setAttribute("aria-checked", String(S.config.minTimeEnabled));
     renderMinTimeFields();
     updateTimeBoundsWarning();
     refreshNavOnly();
@@ -1224,7 +1301,7 @@ function buildConfigTab2(){
   function renderMinTimeFields(){
     if (!S.config.minTimeEnabled){ minTimeFieldsEl.innerHTML = ""; return; }
     minTimeFieldsEl.innerHTML = `
-      <label class="field-label" style="margin-top:10px;">Minimale Zeit (h)</label>
+      <label class="field-label" for="minTimeHoursInput" style="margin-top:10px;">Minimale Zeit (h)</label>
       <input class="num-input" type="number" min="0" max="500" step="1" value="${S.config.minTimeHours}" id="minTimeHoursInput">
     `;
     minTimeFieldsEl.querySelector("#minTimeHoursInput").oninput = (e) => {
@@ -1236,7 +1313,9 @@ function buildConfigTab2(){
 
   timePanel.querySelector("#maxTimeToggle").onclick = () => {
     S.config.maxTimeEnabled = !S.config.maxTimeEnabled;
-    timePanel.querySelector("#maxTimeToggle").classList.toggle("on", S.config.maxTimeEnabled);
+    const btn = timePanel.querySelector("#maxTimeToggle");
+    btn.classList.toggle("on", S.config.maxTimeEnabled);
+    btn.setAttribute("aria-checked", String(S.config.maxTimeEnabled));
     renderMaxTimeFields();
     updateTimeBoundsWarning();
     refreshNavOnly();
@@ -1245,7 +1324,7 @@ function buildConfigTab2(){
   function renderMaxTimeFields(){
     if (!S.config.maxTimeEnabled){ maxTimeFieldsEl.innerHTML = ""; return; }
     maxTimeFieldsEl.innerHTML = `
-      <label class="field-label" style="margin-top:10px;">Maximale Zeit (h)</label>
+      <label class="field-label" for="maxTimeHoursInput" style="margin-top:10px;">Maximale Zeit (h)</label>
       <input class="num-input" type="number" min="1" max="500" step="1" value="${S.config.maxTimeHours}" id="maxTimeHoursInput">
     `;
     maxTimeFieldsEl.querySelector("#maxTimeHoursInput").oninput = (e) => {
@@ -1259,7 +1338,10 @@ function buildConfigTab2(){
   timePanel.querySelectorAll(".radio-opt").forEach(opt => {
     opt.onclick = () => {
       S.config.timeMode = opt.dataset.mode;
-      timePanel.querySelectorAll(".radio-opt").forEach(o => o.classList.toggle("active", o===opt));
+      timePanel.querySelectorAll(".radio-opt").forEach(o => {
+        o.classList.toggle("active", o===opt);
+        o.setAttribute("aria-checked", String(o===opt));
+      });
       renderModeFields();
       refreshNavOnly();
     };
@@ -1268,7 +1350,7 @@ function buildConfigTab2(){
   function renderModeFields(){
     if (S.config.timeMode === "fixed"){
       modeFields.innerHTML = `
-        <label class="field-label">Stunden (1–72)</label>
+        <label class="field-label" for="fixedHoursInput">Stunden (1–72)</label>
         <input class="num-input" type="number" min="1" max="72" step="1" value="${S.config.fixedHours}" id="fixedHoursInput">
       `;
       modeFields.querySelector("#fixedHoursInput").oninput = (e) => {
@@ -1285,7 +1367,7 @@ function buildConfigTab2(){
           <span class="slider-preset-name" id="presetName">${preset.name}</span>
           <span class="slider-preset-factor" id="presetFactor">Faktor ${preset.factor}</span>
         </div>
-        <input class="factor-slider" type="range" min="0" max="4" step="1" value="${S.config.dynamicFactorIndex}" id="factorSlider">
+        <input class="factor-slider" type="range" min="0" max="4" step="1" value="${S.config.dynamicFactorIndex}" id="factorSlider" aria-label="Schwierigkeitsgrad" aria-valuetext="${preset.name}, Faktor ${preset.factor}">
         <div class="slider-ticks">
           ${FACTOR_PRESETS.map(p => `<span>${p.name}</span>`).join("")}
         </div>
@@ -1296,6 +1378,7 @@ function buildConfigTab2(){
         modeFields.querySelector("#presetEmoji").textContent = p.emoji;
         modeFields.querySelector("#presetName").textContent = p.name;
         modeFields.querySelector("#presetFactor").textContent = `Faktor ${p.factor}`;
+        e.target.setAttribute("aria-valuetext", `${p.name}, Faktor ${p.factor}`);
         refreshNavOnly();
       };
     }
@@ -1319,16 +1402,18 @@ function buildConfigTab3(){
     <h2>Wheel of Fortune</h2>
     <div class="toggle-row">
       <div>
-        <div style="font-weight:700;font-size:14px;">Glücksrad aktivieren</div>
+        <div style="font-weight:700;font-size:14px;" id="wheelToggleLabel">Glücksrad aktivieren</div>
         <div class="hint" style="margin:2px 0 0;">Zufällige Boni & Handicaps am Ende.</div>
       </div>
-      <div class="toggle ${S.config.wheelEnabled?'on':''}" id="wheelToggle"><div class="knob"></div></div>
+      <button type="button" class="toggle ${S.config.wheelEnabled?'on':''}" id="wheelToggle" role="switch" aria-checked="${S.config.wheelEnabled}" aria-labelledby="wheelToggleLabel"><span class="knob"></span></button>
     </div>
     <div id="wheelBody"></div>
   `;
   wrap.querySelector("#wheelToggle").onclick = () => {
     S.config.wheelEnabled = !S.config.wheelEnabled;
-    wrap.querySelector("#wheelToggle").classList.toggle("on", S.config.wheelEnabled);
+    const btn = wrap.querySelector("#wheelToggle");
+    btn.classList.toggle("on", S.config.wheelEnabled);
+    btn.setAttribute("aria-checked", String(S.config.wheelEnabled));
     renderWheelBody();
     refreshNavOnly();
   };
@@ -1370,25 +1455,25 @@ function buildConfigTab3(){
       row.className = "field-row";
       row.innerHTML = `
         <div class="field-row-top">
-          <select class="type-select ${f.type}" data-role="type">
+          <select class="type-select ${f.type}" data-role="type" aria-label="Feldtyp">
             ${Object.keys(FIELD_TYPE_LABELS).map(t => `<option value="${t}" ${t===f.type?'selected':''} style="color:${GOOD_FIELD_TYPES.includes(t)?'#3fae63':'#e0483f'};background:#181e2b;">${FIELD_TYPE_LABELS[t]}</option>`).join("")}
           </select>
-          ${isTime ? `<span class="field-unit-label">${f.type==="time_plus"?"+":"−"}</span>${stepperHTML("hours", f.hours, 1, 24)}<span class="field-unit-label">h</span>`
+          ${isTime ? `<span class="field-unit-label">${f.type==="time_plus"?"+":"−"}</span>${stepperHTML("hours", f.hours, 1, 24, "Stunden")}<span class="field-unit-label">h</span>`
                    : (isAmount ? ``
-                   : `<input class="field-label-text" type="text" maxlength="60" placeholder="Beschreibung..." value="${esc(f.label)}" data-role="label">`)}
-          <button class="field-remove">✕</button>
+                   : `<input class="field-label-text" type="text" maxlength="60" placeholder="Beschreibung..." value="${esc(f.label)}" data-role="label" aria-label="Beschreibung">`)}
+          <button class="field-remove" aria-label="Feld entfernen">✕</button>
         </div>
         ${isAmount ? `
           <div class="field-extra" style="margin-top:8px;flex-direction:column;align-items:stretch;gap:6px;">
             <span class="icon-override-label">Menge (${f.type==="amount_plus"?"+":"−"})</span>
-            ${chipRowHTML([1,3,5,10], f.amount||3, "")}
+            ${chipRowHTML([1,3,5,10], f.amount||3, "", "Menge")}
           </div>
           <div class="field-extra" style="margin-top:6px;">Beim Drehen fragt ein Popup, auf welche Kategorie es angewendet wird.</div>
         ` : ``}
         ${advancedToggleHTML("weight", "Erweitert: Gewichtung" + (isCustomWeight ? ` (${f.weight})` : ""), isCustomWeight)}
         <div class="field-advanced ${isCustomWeight ? '' : 'hidden'}" data-role="weightAdvanced">
           <span class="icon-override-label">Gewichtung (Wahrscheinlichkeit):</span>
-          ${stepperHTML("weight", f.weight||1, 1, 10)}
+          ${stepperHTML("weight", f.weight||1, 1, 10, "Gewichtung")}
         </div>
       `;
       row.querySelector('[data-role="type"]').onchange = e => {
@@ -1408,7 +1493,7 @@ function buildConfigTab3(){
       if (isAmount){
         wireChipPicker(row, () => f.amount||3, (v) => { f.amount = v; });
       }
-      wireAdvancedToggle(row, "weight");
+      wireAdvancedToggle(row, "weight", container);
       wireStepper(row, "weight", 1, 10, () => f.weight||1, (v) => { f.weight = v; });
       row.querySelector(".field-remove").onclick = () => {
         S.config.wheelFields = S.config.wheelFields.filter(x => x.id !== f.id);
@@ -1556,33 +1641,52 @@ function updatePendingBadge(wrap){
 /* ===================== GAME TAB 2: Zeit ===================== */
 
 function computeBaseHours(){
-  let rawBase;
+  let base;
   if (S.config.timeMode === "fixed"){
-    rawBase = S.config.fixedHours;
+    base = S.config.fixedHours;
   } else {
     const sum = S.config.categories.reduce((acc,c) => acc + (S.game.rolls[c.id]||0), 0);
-    rawBase = sum * getDynamicFactor();
+    base = sum * getDynamicFactor();
   }
-  let base = rawBase;
-  let baseClampReason = null;
-  if (S.config.minTimeEnabled && base < S.config.minTimeHours){ base = S.config.minTimeHours; baseClampReason = "min"; }
-  if (S.config.maxTimeEnabled && base > S.config.maxTimeHours){ base = S.config.maxTimeHours; baseClampReason = "max"; }
-  S.game.rawBaseHours = rawBase;
+  // Intentionally NOT clamped here: min/max are applied exactly once, to the
+  // final total (base + all wheel deltas), not pre-emptively to the base.
+  // Otherwise an early cap could "eat" the headroom that a later wheel
+  // reduction should have been working against (see conversation).
   S.game.baseHours = base;
-  S.game.baseClampReason = baseClampReason;
   S.game.totalHours = base;
+}
+
+function computeFinalTime(){
+  let final = S.game.totalHours;
+  let clampReason = null;
+  if (S.config.minTimeEnabled && final < S.config.minTimeHours){ final = S.config.minTimeHours; clampReason = "min"; }
+  if (S.config.maxTimeEnabled && final > S.config.maxTimeHours){ final = S.config.maxTimeHours; clampReason = "max"; }
+  return { final, clampReason };
 }
 
 function buildGameTab2(){
   if (S.game.baseHours === null) computeBaseHours();
   const wrap = document.createElement("div");
   wrap.className = "panel";
+  let displayHours = S.game.baseHours;
+  let clampNote = "";
+  if (!S.config.wheelEnabled){
+    // no more changes are coming, so this base IS the final time already —
+    // safe to show the true (possibly clamped) value now. If the wheel is
+    // enabled, defer this to the summary once all spins are resolved.
+    const { final, clampReason } = computeFinalTime();
+    displayHours = final;
+    if (clampReason){
+      clampNote = `<div class="clamp-note">→ ${clampReason==='min'?'Minimalzeit':'Maximalzeit'} greift</div>`;
+    }
+  }
   if (S.config.timeMode === "fixed"){
     wrap.innerHTML = `
       <h2>Zeit</h2>
       <div class="time-hero">
-        <div class="big-num reveal-num" id="fixedTotal">${fmtHours(S.game.baseHours)}h</div>
+        <div class="big-num reveal-num" id="fixedTotal">${fmtHours(displayHours)}h</div>
         <div class="unit">Stunden Zeit (feste Zeit)</div>
+        ${clampNote}
       </div>
     `;
     setTimeout(() => revealFinalNumber(wrap.querySelector("#fixedTotal")), 100);
@@ -1592,8 +1696,9 @@ function buildGameTab2(){
       <p class="hint">Summe der gewürfelten Zahlen × Faktor ${getDynamicFactor()} (${FACTOR_PRESETS[S.config.dynamicFactorIndex].name}).</p>
       <div class="sum-visual" id="sumVisual"></div>
       <div class="time-hero">
-        <div class="big-num reveal-num" id="sumTotal">${fmtHours(S.game.baseHours)}h</div>
+        <div class="big-num reveal-num" id="sumTotal">${fmtHours(displayHours)}h</div>
         <div class="unit">Stunden Zeit (Basis)</div>
+        ${clampNote}
       </div>
     `;
     const sumVisual = wrap.querySelector("#sumVisual");
@@ -1827,6 +1932,69 @@ function spinWheel(wrap){
   rotor.addEventListener("transitionend", onDone);
 }
 
+/* ===================== MODAL FOCUS MANAGEMENT ===================== */
+
+let modalTriggerEl = null;
+let modalKeydownBound = false;
+
+function getFocusableElements(container){
+  return Array.from(container.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+}
+
+function openModal(){
+  modalTriggerEl = document.activeElement;
+  const root = document.getElementById("modalRoot");
+  const box = root.querySelector(".modal-box");
+  if (box){
+    const focusable = getFocusableElements(box);
+    if (focusable.length){
+      focusable[0].focus();
+    } else {
+      box.setAttribute("tabindex", "-1");
+      box.focus();
+    }
+  }
+  if (!modalKeydownBound){
+    document.addEventListener("keydown", handleModalKeydown);
+    modalKeydownBound = true;
+  }
+}
+
+function closeModal(){
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = "";
+  if (modalKeydownBound){
+    document.removeEventListener("keydown", handleModalKeydown);
+    modalKeydownBound = false;
+  }
+  if (modalTriggerEl && document.body.contains(modalTriggerEl)){
+    modalTriggerEl.focus();
+  }
+  modalTriggerEl = null;
+}
+
+function handleModalKeydown(e){
+  const root = document.getElementById("modalRoot");
+  const box = root.querySelector(".modal-box");
+  if (!box) return;
+  if (e.key === "Escape"){
+    if (box.dataset.noDismiss === "true") return; // e.g. the mandatory category picker
+    e.preventDefault();
+    closeModal();
+    return;
+  }
+  if (e.key === "Tab"){
+    const focusable = getFocusableElements(box);
+    if (!focusable.length) return;
+    const first = focusable[0], last = focusable[focusable.length-1];
+    if (e.shiftKey && document.activeElement === first){
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last){
+      e.preventDefault(); first.focus();
+    }
+  }
+}
+
 function showCategoryPickerModal(field, onPick){
   const root = document.getElementById("modalRoot");
   const isPlus = field.type === "amount_plus";
@@ -1840,8 +2008,8 @@ function showCategoryPickerModal(field, onPick){
   `).join("");
   root.innerHTML = `
     <div class="modal-overlay" id="modalOverlay">
-      <div class="modal-box modal-box-small">
-        <h2 style="margin-bottom:12px;">${esc(headline)}</h2>
+      <div class="modal-box modal-box-small" role="dialog" aria-modal="true" aria-labelledby="catPickHeadline" data-no-dismiss="true">
+        <h2 id="catPickHeadline" style="margin-bottom:12px;">${esc(headline)}</h2>
         <div class="cat-pick-list">${rows}</div>
       </div>
     </div>
@@ -1849,10 +2017,11 @@ function showCategoryPickerModal(field, onPick){
   root.querySelectorAll(".cat-pick-row").forEach(btn => {
     btn.onclick = () => {
       const id = btn.dataset.id;
-      root.innerHTML = "";
+      closeModal();
       onPick(id);
     };
   });
+  openModal();
 }
 
 function applyAmountResult(field, categoryId){
@@ -1870,13 +2039,8 @@ function applyWheelResult(field){
   let amt = "";
   if (field.type === "time_plus" || field.type === "time_minus"){
     const delta = field.type === "time_plus" ? field.hours : -field.hours;
-    const before = S.game.totalHours;
-    let after = before + delta;
-    let clampReason = null;
-    if (S.config.minTimeEnabled && after < S.config.minTimeHours){ after = S.config.minTimeHours; clampReason = "min"; }
-    if (S.config.maxTimeEnabled && after > S.config.maxTimeHours){ after = S.config.maxTimeHours; clampReason = "max"; }
-    S.game.totalHours = after;
-    S.game.timeLog.push({ label, delta: after-before, clampReason });
+    S.game.totalHours += delta;
+    S.game.timeLog.push({ label, delta });
     amt = `${field.type==="time_plus"?"+":"−"}${fmtHours(field.hours)}h`;
   }
   S.game.wheelResults.push({ type: field.type, label, amt });
@@ -1917,22 +2081,23 @@ function buildGameTab4(){
 
   let derivation = "";
   if (S.config.timeMode === "fixed"){
-    derivation = `Basis (feste Zeit): <strong>${fmtHours(S.game.rawBaseHours)}h</strong>`;
+    derivation = `Basis (feste Zeit): <strong>${fmtHours(S.game.baseHours)}h</strong>`;
   } else {
     const rolls = S.config.categories.map(c => S.game.rolls[c.id]);
-    derivation = `Basis: (${rolls.join(" + ")}) × ${getDynamicFactor()} = <strong>${fmtHours(S.game.rawBaseHours)}h</strong>`;
-  }
-  if (S.game.baseClampReason){
-    const boundLabel = S.game.baseClampReason === "min" ? "Minimalzeit" : "Maximalzeit";
-    const verb = S.game.baseClampReason === "min" ? "angehoben" : "gedeckelt";
-    derivation += `<br><span class="amt-warn">→ ${boundLabel} greift: auf ${fmtHours(S.game.baseHours)}h ${verb}</span>`;
+    derivation = `Basis: (${rolls.join(" + ")}) × ${getDynamicFactor()} = <strong>${fmtHours(S.game.baseHours)}h</strong>`;
   }
   S.game.timeLog.forEach(t => {
     const deltaClass = t.delta >= 0 ? "amt-good" : "amt-bad";
     const sign = t.delta >= 0 ? "+" : "−";
-    derivation += `<br><span class="${deltaClass}">${sign}${fmtHours(Math.abs(t.delta))}h</span> (${esc(t.label)})${t.clampReason==='min'?' — <span class="amt-warn">Minimalzeit greift</span>':(t.clampReason==='max'?' — <span class="amt-warn">Maximalzeit greift</span>':'')}`;
+    derivation += `<br><span class="${deltaClass}">${sign}${fmtHours(Math.abs(t.delta))}h</span> (${esc(t.label)})`;
   });
-  derivation += `<br><span class="final">= Endzeit: ${fmtHours(S.game.totalHours)}h</span>`;
+  const { final: finalHours, clampReason: finalClampReason } = computeFinalTime();
+  if (finalClampReason){
+    const boundLabel = finalClampReason === "min" ? "Minimalzeit" : "Maximalzeit";
+    const verb = finalClampReason === "min" ? "angehoben" : "gedeckelt";
+    derivation += `<br><span class="amt-warn">→ ${boundLabel} greift: auf ${fmtHours(finalHours)}h ${verb}</span>`;
+  }
+  derivation += `<br><span class="final">= Endzeit: ${fmtHours(finalHours)}h</span>`;
 
   const bonusHandicapRows = S.game.wheelResults.filter(r => r.type==="bonus"||r.type==="handicap"||r.type==="amount_plus"||r.type==="amount_minus"||r.type==="time_plus"||r.type==="time_minus").map(r => `
     <div class="result-row ${r.type}"><span>${esc(r.label)}</span>${r.amt ? `<span class="amt">${esc(r.amt)}</span>` : ""}</div>
@@ -1942,7 +2107,7 @@ function buildGameTab4(){
     <h2>Zusammenfassung</h2>
     <div id="summaryCapture" class="capture-pad">
       <div class="final-hero">
-        <div class="big-num reveal-num" id="finalBigNum">${formatDuration(S.game.totalHours)}</div>
+        <div class="big-num reveal-num" id="finalBigNum">${formatDuration(finalHours)}</div>
         <div class="unit">Zeit für den Verlierer</div>
       </div>
       <div class="summary-block">
@@ -1988,8 +2153,11 @@ function loadHtml2Canvas(cb, onError){
   if (window.html2canvas) { cb(); return; }
   const s = document.createElement("script");
   s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+  s.integrity = "sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H";
+  s.crossOrigin = "anonymous";
+  s.referrerPolicy = "no-referrer";
   s.onload = cb;
-  s.onerror = () => onError("Bild-Export konnte nicht geladen werden (keine Internetverbindung?).");
+  s.onerror = () => onError("Bild-Export konnte nicht geladen werden (keine Internetverbindung, oder die Datei auf dem CDN hat sich geändert).");
   document.head.appendChild(s);
 }
 
@@ -2156,7 +2324,7 @@ function showConfirmModal(message, onConfirm, opts={}){
   const confirmText = opts.confirmText || "Bestätigen";
   root.innerHTML = `
     <div class="modal-overlay" id="modalOverlay">
-      <div class="modal-box modal-box-small">
+      <div class="modal-box modal-box-small" role="dialog" aria-modal="true" aria-label="Bestätigung">
         <p class="modal-message">${esc(message)}</p>
         <div class="row-btns" style="margin-top:16px;">
           <button class="btn ghost full" id="modalCancelBtn">${esc(cancelText)}</button>
@@ -2165,17 +2333,17 @@ function showConfirmModal(message, onConfirm, opts={}){
       </div>
     </div>
   `;
-  const close = () => { root.innerHTML = ""; };
-  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") close(); };
-  document.getElementById("modalCancelBtn").onclick = close;
-  document.getElementById("modalConfirmBtn").onclick = () => { close(); onConfirm(); };
+  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") closeModal(); };
+  document.getElementById("modalCancelBtn").onclick = closeModal;
+  document.getElementById("modalConfirmBtn").onclick = () => { closeModal(); onConfirm(); };
+  openModal();
 }
 
 function showAlertModal(message){
   const root = document.getElementById("modalRoot");
   root.innerHTML = `
     <div class="modal-overlay" id="modalOverlay">
-      <div class="modal-box modal-box-small">
+      <div class="modal-box modal-box-small" role="dialog" aria-modal="true" aria-label="Hinweis">
         <p class="modal-message">${esc(message)}</p>
         <div class="row-btns" style="margin-top:16px;">
           <button class="btn primary full" id="modalOkBtn">OK</button>
@@ -2183,9 +2351,9 @@ function showAlertModal(message){
       </div>
     </div>
   `;
-  const close = () => { root.innerHTML = ""; };
-  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") close(); };
-  document.getElementById("modalOkBtn").onclick = close;
+  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") closeModal(); };
+  document.getElementById("modalOkBtn").onclick = closeModal;
+  openModal();
 }
 
 /* ===================== HELP MODAL ===================== */
@@ -2194,8 +2362,8 @@ function showHelpModal(){
   const root = document.getElementById("modalRoot");
   root.innerHTML = `
     <div class="modal-overlay" id="modalOverlay">
-      <div class="modal-box">
-        <h2>Wie funktioniert's?</h2>
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <h2 id="helpModalTitle">Wie funktioniert's?</h2>
         <p><strong>Config:</strong> Aufgaben festlegen, Würfeltyp wählen, Zeitmodus einstellen, optional das Glücksrad konfigurieren.</p>
         <ul>
           <li>Jede Aufgabe bekommt beim Spiel eine gewürfelte Menge.</li>
@@ -2208,20 +2376,26 @@ function showHelpModal(){
       </div>
     </div>
   `;
-  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") root.innerHTML=""; };
-  document.getElementById("closeModalBtn").onclick = () => root.innerHTML = "";
+  document.getElementById("modalOverlay").onclick = (e) => { if (e.target.id==="modalOverlay") closeModal(); };
+  document.getElementById("closeModalBtn").onclick = closeModal;
+  openModal();
 }
 
 /* ===================== INIT ===================== */
 
-window.addEventListener("beforeunload", (e) => {
-  const hasProgress = S.page === "game" || S.configTab > 1;
-  if (hasProgress){
-    e.preventDefault();
-    e.returnValue = "";
-  }
-});
+// A confirm-before-leaving prompt no longer makes sense here: reloading is
+// now safe (state is restored below), and the browser can't tell a reload
+// apart from an actual tab close in the beforeunload event. So instead we
+// just make sure the very latest state is saved before the page goes away.
+window.addEventListener("beforeunload", saveStateToSession);
 
+// Catches fine-grained edits (typing, sliders, steppers, chip taps) that
+// intentionally update their own bit of the DOM directly instead of calling
+// a full render() — a light periodic tick keeps the session snapshot fresh
+// without instrumenting every single input handler individually.
+setInterval(saveStateToSession, 1500);
+
+loadStateFromSession();
 render();
 
 })();
